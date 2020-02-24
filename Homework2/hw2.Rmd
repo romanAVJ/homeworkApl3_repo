@@ -1,0 +1,142 @@
+---
+title: "hw2"
+author: "Pablo,Román,Sofía"
+date: "12/2/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(knitr)
+```
+
+```{r}
+set.seed(20200208) #created at date
+
+# assigning number of excercises 
+(people_3quest <- sample(x = c("Pablo","Roman","Sof"),replace = F, size = 1)) #people with 4 questions, by alphabetic order
+
+
+# assinging excersises
+number_ex <- 1:10 #excercises
+cat("\nEjercicios Pablo: ")
+(ex_pablo <- sample(x = number_ex, replace = F, size = 4))
+number_ex <- number_ex[! number_ex %in% ex_pablo] #removing questions 
+
+cat("\nEjercicios Roman: ")
+(ex_roman <- sample(x = number_ex, replace = F, size = 3))
+number_ex <- number_ex[! number_ex %in% ex_roman] #removing questions 
+
+cat("\nEjercicios Sof: ")
+(ex_sof <- number_ex)
+```
+
+
+# Ejercicio 5
+
+Leyendo la base de datos.
+
+```{r,'Excercise 5'}
+#read databse
+path <- 'C:/Users/Ryo/Documents/ITAM/8Semestre/EstadisticaAplicada3/Tareas/homeworkApl3_repo/Homework2/'
+file <- 'INEGIConstruccion2017.csv'
+df_inegi <- read.csv(file = paste(path,file,sep = ""),header = T,skip = 0) #skip lines
+
+```
+
+Observamos que las variables están colocadas de manera continua sobre todas las columnas, son 215 variables. Queremos hacer una matriz $X$ donde sus variables sean las mencionadas anteriormente y sus oobservaciones sean los estados para enero del 2017.
+
+Además, notamos lo siguiente:
+- Hay columnas faltantes.
+- Entre cada variable, hay un _total nacional_. (Se optará por eliminarlo, ya que produce colinealidad).
+- De la variable __Valor de producción generado ...__, sólo hay _16_ observaciones. Por lo que quitar los renglones _NO_ es opción. Se hará un remuestreo con reemplazo para asignar el valor de las variables.
+
+### 5a. $X$ configurada para operar.
+Se limpiará a continuación la base de datos de forma manual, debido a que no hay un patrón definido.
+```{r,'Ex5 DataWrangling'}
+set.seed(42)
+#copy raw data
+file2 <- 'inegiClean.csv'
+
+#clean
+df_raw <- read.csv(paste(path,file2,sep=""),header = FALSE)
+df_raw <- as.matrix(df_raw)
+
+#data is transposed
+df_raw <- t(df_raw)
+df_raw[17:32,2] <- sample(df_raw[1:16,2], size = 16, replace = T)
+X <- df_raw
+
+#look
+tail(X)
+```
+
+###5.b Calculate the mean vector and the variance and covariance matrix
+```{r,'Ex5 Xbar, Cov'}
+mean_vec <- colMeans(X)
+Sprime <- cov(X)
+
+cat("\n Vector de medias\n")
+kable(mean_vec,caption = "Vector de medias", digits = 3)
+
+cat("\n Matriz de var y cov\n")
+kable(Sprime, col.names = c("X1","X2","X3","X4","X5","X6","X7"), digits = 3)
+
+
+```
+
+### 5c. Verificar det($S$) = $\prod_{i=1}^{7}s^{2} \text{det}(R)$
+
+```{r,'Ex5c'}
+detS <- det(Sprime)
+
+#prove det
+prodaux <- 1
+
+#measure vars
+Rprime <- cor(X) #corr matrix
+n <- ncol(X) #number of vars
+D <- diag(x = eigen(Sprime)$values,)
+
+for(i in 1:n)
+  prodaux <- prodaux * D[i,i] * det(Rprime) 
+  
+```
+
+
+# Ejercicio 6
+
+Sea $\underline{X} \sim \mathcal{N}_{3}(\underline{\mu},\Sigma)$ con $\underline{\mu}$ y $\Sigma$ definidas como en la tarea. Determinar cuales de las sig vars son independientes y porqué:
+
+- $X_{1} \ \text{y} \ X_{2}$: __Dependientes__, debido a que la covarianza entre ellas es distinta de cero.
+- $X{2} \ \text{y} \ X_{3}$: __Independientes__, ya que la covarianza entre ellas es cero.
+- $(X_{1},X_{2}) \ \text{y} \ X_{3}$: __Independientes__ ya que el bloque de la matriz $\Sigma$ para $X_{1,2} \ \text{y} \  X_{3}$ tiene ceros en los traingulos superiores e inferiores.
+- $\frac{(X_{1} +X_{2})}{2} \ \text{y} \ X_{3}$: __Independientes__, por el inciso anterior.
+- $X_{2} \ \text{y} \ X_{2} - \frac{5}{2}X_{1} - X_{3}$: __Dependientes__. Pues ambas variables _dependen_ del valor que tome $X_{2}$.
+
+
+
+
+# Ejercicio 8
+
+Sea $y_{i} = Ax_{i} + b, \quad i = 1,\dots,n$, mostrar que
+
+### 8.i) $\bar{y} = A\bar{x} + b$
+
+
+Sea  $\bar{y} = A\bar{x} + b$, vemos que:
+\begin{equation*}
+\bar{y} = \frac{1}{n}\sum_{i=1}^{m}y_{i} =\frac{1}{n}\sum_{i=1}^{m}{(Ax_{i} + b)} = \frac{1}{n}\sum_{i=1}^{m}(Ax_{i}) + b 
+        = A \frac{1}{n}\sum_{i=1}^{m}(x_{i}) + b = A\bar{x} + b.
+\end{equation*}
+
+
+
+### 8.ii) $S_{y} = A S_{y} A^{T}$
+
+Usando el teorema de proba2 que dice que
+$$ \text{var}(A\underline{X}) = A \text{var}(\underline{X}) A^{T},$$
+entonces tendremos que
+$$S_{y} = \text{var}{\underline{Y}} = \text{var}(A\underline{X} + b) = \text{var}(A\underline{X}) = A\text{var}(\underline{X})A^{T} = AS_{x}A^{T}.$$
+
+
