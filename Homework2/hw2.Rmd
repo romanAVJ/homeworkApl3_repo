@@ -1,0 +1,257 @@
+---
+title: "hw2"
+author: "Pablo,Román,Sofía"
+date: "12/2/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(knitr)
+```
+
+```{r}
+set.seed(20200208) #created at date
+
+# assigning number of excercises 
+(people_3quest <- sample(x = c("Pablo","Roman","Sof"),replace = F, size = 1)) #people with 4 questions, by alphabetic order
+
+
+# assinging excersises
+number_ex <- 1:10 #excercises
+cat("\nEjercicios Pablo: ")
+(ex_pablo <- sample(x = number_ex, replace = F, size = 4))
+number_ex <- number_ex[! number_ex %in% ex_pablo] #removing questions 
+
+cat("\nEjercicios Roman: ")
+(ex_roman <- sample(x = number_ex, replace = F, size = 3))
+number_ex <- number_ex[! number_ex %in% ex_roman] #removing questions 
+
+cat("\nEjercicios Sof: ")
+(ex_sof <- number_ex)
+```
+##Ejercicio 1
+
+Un outlier se define como una observación que cae más allá de las barras del boxplot, las
+barras o whiskers se definen como: $F_U + 1.5dF$ y $F_L −1.5dF$ , donde $F_L$ y $F_U$ los quartiles 1 y 3
+respectivamente y dF es el rango intercuartil. El extremo suerior es el máximo del conjunto
+de datos. Responder las siguientes preguntas:
+
+Recordemos que un valor que caiga 1.5 rangos intercuantiles abajo o arriba del quantil superior/inferior es un outlier.
+
+a)¿Es el extremo superior siempre un outlier?
+
+Por definición, el extemo superior es el dato mayor exluyendo a los outliers, es decir, no puede ser uno de ellos.
+
+b) ¿Es posible para la media o la mediana quedar afuera de los cuartiles o incluso afuera
+de los whiskers?
+
+Le mediana es la linea que divide la caja a la mitad, por lo que, nunca quedará afuera de los cuantiles, es uno como tal y menos podr??a estar fuera de los whiskers.Además, los whiskers representan una desviación estándar arriba y abajo de la media, entonces, tampoco puede estar fuera la media.
+
+c) Supongan que los datos se distribuyen $N(0, 1)$. ¿Qué porcentaje de los datos esperan
+que caigan afuera de los whiskers?
+
+Al observar la tabla z, podemos buscar el percentil 25 y el percentil 75, que son aproximadamente -0.675 y 0.675. Entonces, podemos obtener el l??mite inferior y el l??mite superior para el rango intercuantil $25 - 1.5 * (75 - 25)$ y $75 + 1.5 * (75 - 25)$, que es (-2.7,2.7).Entonces, tenemos 0.0035 de probabilidad a la izquierda (<-2.7) y 0.0035 de probabilidad a la derecha (> -2.7), entonces un total de 0.007 (0.7%) de probabilidad de estar fuera de os whiskers y ser outlier por lo tanto.
+
+d) ¿Qué porcentaje de los datos se espera que caigan fuera de los whiskers si suponemos
+que los datos son normales con media 0 y varianza $\sigma^2$ desconocida?
+
+Siguiendo el razonamiento anterior tenemos que el rango "aceptable" es $(-2.7\sigma,2.7\sigma)$. Lo cual coincide con .355 de probabilidad de caer en cada lado, por lo que, también tenemos un .7% de probabilidad de outliers.
+
+##Ejercicio 3
+3 Usando las seis observaciones de la variable X1 en millones de dólares:
+  a. Encuentra la proyección sobre 1'= (1, 1, 1, 1, 1, 1)
+  b. Calcula el vector desviación y1 − x¯11. Relaciona su longitud a la desviación estándar.
+  c. Grafica (a escala) el triángulo formado por y1, x¯1 y y1 − x¯11. Identifica la longitud      de cada vector en tu gráfica.
+  d. Repetir los incisos (a) a (c) para X2
+  e. Grafica (a escala) los dos vectores desviación y1 − x¯11 y y2 − x¯21. Calcula el valor       del ángulo entre ellos.
+  f. Calcula la varianza muestral generalizada det(S) para estos datos e interpreta.
+  g. Calcula la varianza muestral total tr(S) para estos datos e interpreta.
+
+Para resolver el inciso a), utilizaremos la siguiente formula para obtener la proyección del vector $x$ sobre $y$.
+$$proy(x,y)= \frac{x'y}{y'y}y $$.
+
+```{r,echo = FALSE}
+data3 <- read.csv("data_q3.csv")
+names(data3) <- c("Equipo","x1","x2")
+X1.3 <- as.array(data3$x1)
+x2.3 <- as.array(data3$x2)
+```
+
+```{r}
+# a)
+proy <-function(x,y){
+  (t(x)%*%y)[1]/(t(y)%*%y)[1]*y 
+}
+unos <- rep(1,6)
+proy(X1.3,unos)
+```
+
+
+##Ejercicio 4
+4 Dibuja las elipsoides sólidas $\{{x|(x − \bar{x})'S^{-1}(x − \bar{x}) ≤ 1\}}$ para las tres matrices siguientes y determina los valores de los ejes mayores y menores.
+a)$$S = \left(\begin{array}{cc} 
+5 & 4\\
+4 & 5
+\end{array}\right)$$  
+Asumimos que la media es cero, es decir $\bar{x} = 0$. Esto hara que nuestras elipses esten centradas en el origen.
+```{r}
+S1 <- matrix(c(5,4,4,5),nrow = 2, byrow = T)
+(lambdas1 <- eigen(S1)$values)
+```
+
+b)$$S = \left(\begin{array}{cc} 
+5 & -4\\
+-4 & 5
+\end{array}\right)$$
+```{r}
+S2 <- matrix(c(5,-4,-4,5),nrow = 2, byrow = T)
+(lambdas2 <- eigen(S2)$values)
+```
+
+c)$$S = \left(\begin{array}{cc} 
+3 & 0\\
+3 & 3
+\end{array}\right)$$
+```{r}
+S3 <- matrix(c(3,0,0,3),nrow = 2, byrow = T)
+(lambdas3 <- eigen(S3)$values)
+```
+
+
+##Ejercicio 5
+
+Leyendo la base de datos.
+
+```{r,'Excercise 5'}
+#read databse
+path <- 'C:/Users/Ryo/Documents/ITAM/8Semestre/EstadisticaAplicada3/Tareas/homeworkApl3_repo/Homework2/'
+file <- 'INEGIConstruccion2017.csv'
+df_inegi <- read.csv(file = paste(path,file,sep = ""),header = T,skip = 0) #skip lines
+
+```
+
+Observamos que las variables están colocadas de manera continua sobre todas las columnas, son 215 variables. Queremos hacer una matriz $X$ donde sus variables sean las mencionadas anteriormente y sus oobservaciones sean los estados para enero del 2017.
+
+Además, notamos lo siguiente:
+- Hay columnas faltantes.
+- Entre cada variable, hay un _total nacional_. (Se optará por eliminarlo, ya que produce colinealidad).
+- De la variable __Valor de producción generado ...__, sólo hay _16_ observaciones. Por lo que quitar los renglones _NO_ es opción. Se hará un remuestreo con reemplazo para asignar el valor de las variables.
+
+### 5a. $X$ configurada para operar.
+Se limpiará a continuación la base de datos de forma manual, debido a que no hay un patrón definido.
+```{r,'Ex5 DataWrangling'}
+set.seed(42)
+#copy raw data
+file2 <- 'inegiClean.csv'
+
+#clean
+df_raw <- read.csv(paste(path,file2,sep=""),header = FALSE)
+df_raw <- as.matrix(df_raw)
+
+#data is transposed
+df_raw <- t(df_raw)
+df_raw[17:32,2] <- sample(df_raw[1:16,2], size = 16, replace = T)
+X <- df_raw
+
+#look
+tail(X)
+```
+
+###5.b Calculate the mean vector and the variance and covariance matrix
+```{r,'Ex5 Xbar, Cov'}
+mean_vec <- colMeans(X)
+Sprime <- cov(X)
+
+cat("\n Vector de medias\n")
+kable(mean_vec,caption = "Vector de medias", digits = 3)
+
+cat("\n Matriz de var y cov\n")
+kable(Sprime, col.names = c("X1","X2","X3","X4","X5","X6","X7"), digits = 3)
+
+
+```
+
+### 5c. Verificar det($S$) = $\prod_{i=1}^{7}s^{2} \text{det}(R)$
+
+```{r,'Ex5c'}
+detS <- det(Sprime)
+
+#prove det
+prodaux <- 1
+
+#measure vars
+Rprime <- cor(X) #corr matrix
+n <- ncol(X) #number of vars
+D <- diag(x = eigen(Sprime)$values,)
+
+for(i in 1:n)
+  prodaux <- prodaux * D[i,i] * det(Rprime) 
+  
+```
+
+
+##Ejercicio 6
+
+Sea $\underline{X} \sim \mathcal{N}_{3}(\underline{\mu},\Sigma)$ con $\underline{\mu}$ y $\Sigma$ definidas como en la tarea. Determinar cuales de las sig vars son independientes y porqué:
+
+- $X_{1} \ \text{y} \ X_{2}$: __Dependientes__, debido a que la covarianza entre ellas es distinta de cero.
+- $X{2} \ \text{y} \ X_{3}$: __Independientes__, ya que la covarianza entre ellas es cero.
+- $(X_{1},X_{2}) \ \text{y} \ X_{3}$: __Independientes__ ya que el bloque de la matriz $\Sigma$ para $X_{1,2} \ \text{y} \  X_{3}$ tiene ceros en los traingulos superiores e inferiores.
+- $\frac{(X_{1} +X_{2})}{2} \ \text{y} \ X_{3}$: __Independientes__, por el inciso anterior.
+- $X_{2} \ \text{y} \ X_{2} - \frac{5}{2}X_{1} - X_{3}$: __Dependientes__. Pues ambas variables _dependen_ del valor que tome $X_{2}$.
+
+
+
+
+##Ejercicio 8
+
+Sea $y_{i} = Ax_{i} + b, \quad i = 1,\dots,n$, mostrar que
+
+### 8.i) $\bar{y} = A\bar{x} + b$
+
+
+Sea  $\bar{y} = A\bar{x} + b$, vemos que:
+\begin{equation*}
+\bar{y} = \frac{1}{n}\sum_{i=1}^{m}y_{i} =\frac{1}{n}\sum_{i=1}^{m}{(Ax_{i} + b)} = \frac{1}{n}\sum_{i=1}^{m}(Ax_{i}) + b 
+        = A \frac{1}{n}\sum_{i=1}^{m}(x_{i}) + b = A\bar{x} + b.
+\end{equation*}
+
+
+
+### 8.ii) $S_{y} = A S_{y} A^{T}$
+
+Usando el teorema de proba2 que dice que
+$$ \text{var}(A\underline{X}) = A \text{var}(\underline{X}) A^{T},$$
+entonces tendremos que
+$$S_{y} = \text{var}{\underline{Y}} = \text{var}(A\underline{X} + b) = \text{var}(A\underline{X}) = A\text{var}(\underline{X})A^{T} = AS_{x}A^{T}.$$
+##Ejercicio 9
+a) Para el vector de medias sabemos que el vector de medias de una matriz $X$ está dado por $\bar{x}$=
+$\begin{bmatrix} \bar{x_1}\\ \bar{x_2}\end{bmatrix}$ con $\bar{x_i}$=$\frac{1}{n}\sum_{i=1}^{n}x_{1i}$
+
+Por otro lado, $X_1^T1$= $\begin{bmatrix} x_{11}\ x_{12}\ \cdots \ x_{147}\\ \ x_{21}\ x_{22}\ \cdots\ x_{247}\end{bmatrix} \begin{bmatrix} 1 \\ \vdots \\ 1\end{bmatrix}$=$\begin{bmatrix} \sum_{i=1}^{n}x_{1i}\\  \sum_{i=1}^{n}x_{2i}\end{bmatrix}$=$\begin{bmatrix} 110-9\\ 432.5\end{bmatrix}$. Por lo tanto, el vector de medias es: $\bar{x_1}=$X_1^T1$=
+$\begin{bmatrix} 2.36\\ 9.2\end{bmatrix}$
+
+```{r}
+a<-c(110.9, 432.5) #x^t1
+(vec_med<-a/47)
+```
+
+
+Sabemos que S (matriz de varianzas y covarianzas) se escribe como $S= \frac{1}{n} \Sigma$ con $\Sigma=A^TA$ y $A=X-11^TX$ donde $X$ es una mátriz de tamaño nxp que contiene las observaciones y $1$ es un vector de unos de tamaño nxp.
+En este caso tenemos $n=47$. Si desarrolamos, $\Sigma=X^TX-\frac{2}{n}(X^T1)(X^T1)^T+\frac{1}{n^2}(X^T1)1^T1(X^T1)^T$. Ya tenemos los resultados de $X^TX$ y de $X^T1$. Calculamos entonces la S:
+
+```{r}
+xtx<-matrix(c(265.12, 1029.62, 1029.62,4069.71),nrow=2,byrow=T)
+uno<-c(rep(1, 47))
+a<-c(110.9, 432.5) #x^t1
+```
+
+```{r}
+sigma<-xtx-(2/47)*a %*% t(a)+(1/47)**2*a%*%t(uno)%*%uno%*%t(a)
+```
+
+```{r}
+(s=(1/47)*sigma)
+```
+
