@@ -30,9 +30,96 @@ number_ex <- number_ex[! number_ex %in% ex_roman] #removing questions
 cat("\nEjercicios Sof: ")
 (ex_sof <- number_ex)
 ```
+##Ejercicio 1
+
+Un outlier se define como una observación que cae más allá de las barras del boxplot, las
+barras o whiskers se definen como: $F_U + 1.5dF$ y $F_L −1.5dF$ , donde $F_L$ y $F_U$ los quartiles 1 y 3
+respectivamente y dF es el rango intercuartil. El extremo suerior es el máximo del conjunto
+de datos. Responder las siguientes preguntas:
+
+Recordemos que un valor que caiga 1.5 rangos intercuantiles abajo o arriba del quantil superior/inferior es un outlier.
+
+a)¿Es el extremo superior siempre un outlier?
+
+Por definición, el extemo superior es el dato mayor exluyendo a los outliers, es decir, no puede ser uno de ellos.
+
+b) ¿Es posible para la media o la mediana quedar afuera de los cuartiles o incluso afuera
+de los whiskers?
+
+Le mediana es la linea que divide la caja a la mitad, por lo que, nunca quedará afuera de los cuantiles, es uno como tal y menos podr??a estar fuera de los whiskers.Además, los whiskers representan una desviación estándar arriba y abajo de la media, entonces, tampoco puede estar fuera la media.
+
+c) Supongan que los datos se distribuyen $N(0, 1)$. ¿Qué porcentaje de los datos esperan
+que caigan afuera de los whiskers?
+
+Al observar la tabla z, podemos buscar el percentil 25 y el percentil 75, que son aproximadamente -0.675 y 0.675. Entonces, podemos obtener el l??mite inferior y el l??mite superior para el rango intercuantil $25 - 1.5 * (75 - 25)$ y $75 + 1.5 * (75 - 25)$, que es (-2.7,2.7).Entonces, tenemos 0.0035 de probabilidad a la izquierda (<-2.7) y 0.0035 de probabilidad a la derecha (> -2.7), entonces un total de 0.007 (0.7%) de probabilidad de estar fuera de os whiskers y ser outlier por lo tanto.
+
+d) ¿Qué porcentaje de los datos se espera que caigan fuera de los whiskers si suponemos
+que los datos son normales con media 0 y varianza $\sigma^2$ desconocida?
+
+Siguiendo el razonamiento anterior tenemos que el rango "aceptable" es $(-2.7\sigma,2.7\sigma)$. Lo cual coincide con .355 de probabilidad de caer en cada lado, por lo que, también tenemos un .7% de probabilidad de outliers.
+
+##Ejercicio 3
+3 Usando las seis observaciones de la variable X1 en millones de dólares:
+  a. Encuentra la proyección sobre 1'= (1, 1, 1, 1, 1, 1)
+  b. Calcula el vector desviación y1 − x¯11. Relaciona su longitud a la desviación estándar.
+  c. Grafica (a escala) el triángulo formado por y1, x¯1 y y1 − x¯11. Identifica la longitud      de cada vector en tu gráfica.
+  d. Repetir los incisos (a) a (c) para X2
+  e. Grafica (a escala) los dos vectores desviación y1 − x¯11 y y2 − x¯21. Calcula el valor       del ángulo entre ellos.
+  f. Calcula la varianza muestral generalizada det(S) para estos datos e interpreta.
+  g. Calcula la varianza muestral total tr(S) para estos datos e interpreta.
+
+Para resolver el inciso a), utilizaremos la siguiente formula para obtener la proyección del vector $x$ sobre $y$.
+$$proy(x,y)= \frac{x'y}{y'y}y $$.
+
+```{r,echo = FALSE}
+data3 <- read.csv("data_q3.csv")
+names(data3) <- c("Equipo","x1","x2")
+X1.3 <- as.array(data3$x1)
+x2.3 <- as.array(data3$x2)
+```
+
+```{r}
+# a)
+proy <-function(x,y){
+  (t(x)%*%y)[1]/(t(y)%*%y)[1]*y 
+}
+unos <- rep(1,6)
+proy(X1.3,unos)
+```
 
 
-# Ejercicio 5
+##Ejercicio 4
+4 Dibuja las elipsoides sólidas $\{{x|(x − \bar{x})'S^{-1}(x − \bar{x}) ≤ 1\}}$ para las tres matrices siguientes y determina los valores de los ejes mayores y menores.
+a)$$S = \left(\begin{array}{cc} 
+5 & 4\\
+4 & 5
+\end{array}\right)$$  
+Asumimos que la media es cero, es decir $\bar{x} = 0$. Esto hara que nuestras elipses esten centradas en el origen.
+```{r}
+S1 <- matrix(c(5,4,4,5),nrow = 2, byrow = T)
+(lambdas1 <- eigen(S1)$values)
+```
+
+b)$$S = \left(\begin{array}{cc} 
+5 & -4\\
+-4 & 5
+\end{array}\right)$$
+```{r}
+S2 <- matrix(c(5,-4,-4,5),nrow = 2, byrow = T)
+(lambdas2 <- eigen(S2)$values)
+```
+
+c)$$S = \left(\begin{array}{cc} 
+3 & 0\\
+3 & 3
+\end{array}\right)$$
+```{r}
+S3 <- matrix(c(3,0,0,3),nrow = 2, byrow = T)
+(lambdas3 <- eigen(S3)$values)
+```
+
+
+##Ejercicio 5
 
 Leyendo la base de datos.
 
@@ -104,7 +191,7 @@ for(i in 1:n)
 ```
 
 
-# Ejercicio 6
+##Ejercicio 6
 
 Sea $\underline{X} \sim \mathcal{N}_{3}(\underline{\mu},\Sigma)$ con $\underline{\mu}$ y $\Sigma$ definidas como en la tarea. Determinar cuales de las sig vars son independientes y porqué:
 
@@ -117,7 +204,7 @@ Sea $\underline{X} \sim \mathcal{N}_{3}(\underline{\mu},\Sigma)$ con $\underline
 
 
 
-# Ejercicio 8
+##Ejercicio 8
 
 Sea $y_{i} = Ax_{i} + b, \quad i = 1,\dots,n$, mostrar que
 
@@ -138,5 +225,33 @@ Usando el teorema de proba2 que dice que
 $$ \text{var}(A\underline{X}) = A \text{var}(\underline{X}) A^{T},$$
 entonces tendremos que
 $$S_{y} = \text{var}{\underline{Y}} = \text{var}(A\underline{X} + b) = \text{var}(A\underline{X}) = A\text{var}(\underline{X})A^{T} = AS_{x}A^{T}.$$
+##Ejercicio 9
+a) Para el vector de medias sabemos que el vector de medias de una matriz $X$ está dado por $\bar{x}$=
+$\begin{bmatrix} \bar{x_1}\\ \bar{x_2}\end{bmatrix}$ con $\bar{x_i}$=$\frac{1}{n}\sum_{i=1}^{n}x_{1i}$
 
+Por otro lado, $X_1^T1$= $\begin{bmatrix} x_{11}\ x_{12}\ \cdots \ x_{147}\\ \ x_{21}\ x_{22}\ \cdots\ x_{247}\end{bmatrix} \begin{bmatrix} 1 \\ \vdots \\ 1\end{bmatrix}$=$\begin{bmatrix} \sum_{i=1}^{n}x_{1i}\\  \sum_{i=1}^{n}x_{2i}\end{bmatrix}$=$\begin{bmatrix} 110-9\\ 432.5\end{bmatrix}$. Por lo tanto, el vector de medias es: $\bar{x_1}=$X_1^T1$=
+$\begin{bmatrix} 2.36\\ 9.2\end{bmatrix}$
+
+```{r}
+a<-c(110.9, 432.5) #x^t1
+(vec_med<-a/47)
+```
+
+
+Sabemos que S (matriz de varianzas y covarianzas) se escribe como $S= \frac{1}{n} \Sigma$ con $\Sigma=A^TA$ y $A=X-11^TX$ donde $X$ es una mátriz de tamaño nxp que contiene las observaciones y $1$ es un vector de unos de tamaño nxp.
+En este caso tenemos $n=47$. Si desarrolamos, $\Sigma=X^TX-\frac{2}{n}(X^T1)(X^T1)^T+\frac{1}{n^2}(X^T1)1^T1(X^T1)^T$. Ya tenemos los resultados de $X^TX$ y de $X^T1$. Calculamos entonces la S:
+
+```{r}
+xtx<-matrix(c(265.12, 1029.62, 1029.62,4069.71),nrow=2,byrow=T)
+uno<-c(rep(1, 47))
+a<-c(110.9, 432.5) #x^t1
+```
+
+```{r}
+sigma<-xtx-(2/47)*a %*% t(a)+(1/47)**2*a%*%t(uno)%*%uno%*%t(a)
+```
+
+```{r}
+(s=(1/47)*sigma)
+```
 
