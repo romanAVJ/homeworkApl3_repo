@@ -333,7 +333,7 @@ x1 = mu[1] + s*DE$vectors[1,2], y1 = mu[2] + s*DE$vectors[2,2], length = 0.1, co
 
 
 
-En este caso tanto el eje menor como el mayor son 1.7
+En este caso tanto el eje menor como el mayor son 1.7.
 ##Ejercicio 5
 
 Leyendo la base de datos.
