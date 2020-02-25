@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(knitr)
 ```
 
-```{r}
+```{r, echo = false}
 set.seed(20200208) #created at date
 
 # assigning number of excercises 
@@ -58,13 +58,44 @@ que los datos son normales con media 0 y varianza $\sigma^2$ desconocida?
 
 Siguiendo el razonamiento anterior tenemos que el rango "aceptable" es $(-2.7\sigma,2.7\sigma)$. Lo cual coincide con .355 de probabilidad de caer en cada lado, por lo que, también tenemos un .7% de probabilidad de outliers.
 
+##Ejercicio 2
+2. Supongamos que tenemos 50 observaciones de una N (0,1) y otras 50 observaciones de una
+N (2, 1). ¿Cómo se verán las 100 caras de Chernoff si X y Y definen la línea de la cara y la
+oscuridad del cabello? ¿Esperan caras similares? ¿Cuántas caras lucen como observaciones
+de Y aún cuando son observaciones de X?
+
+Como no encontramos los atributos de lina de la cara y oscuridad de cabello, usaremos lo mas proximo que encontramos que fue la estructura de la cara y el estilo de cabello.
+Esperamos que las caras no difieran tanto en cuanto a su estructura facial y con respecto a su estilo de cabello. Dado que lo unico que cambia es su media.
+```{r}
+library(aplpack)
+# Primero creamos la matriz de estructura para las 100 caras de chernoff, con 15 entradas para sus atributos
+CH <- matrix (rep(1,1500),ncol = 15)
+X.2 <- rnorm(50)
+Y.2 <- rnorm(50,2,1)
+
+#x1.2 <- sample(c(X.2,Y.2))
+#y1.2 <- sample(c(X.2,Y.2))
+
+#La estructura de la cara, corresponde a la entrada 3, mientras que el estilo del cabello a la 11, es por eso que sustituimos aqui 50 observaciones de X y 50 de 
+CH[1:50,3] <- X.2
+CH[1:50,11] <- Y.2
+CH[1:50,3] <- sample(X.2)
+CH[1:50,11] <- sample(Y.2)
+
+
+faces(CH[1:50,],ncol.plot = 10, nrow.plot = 5, main= "Primeras 50 observaciones corresp a X")
+faces(CH[51:100,],ncol.plot = 10, nrow.plot = 5, main = "Ultimas 50 observaciones corresp a X")
+```
+Podemos ver una diferencia notoria entre dos fenotipos faciales. Mientras las caras correspondientes a $X$ tienen forma mas ovalada y en promedio su cabello es verde, las de $Y$ son un poco mas cuadradas y el color de pelo es amarillo.
+
+
 ##Ejercicio 3
 3 Usando las seis observaciones de la variable X1 en millones de dólares:
-  a. Encuentra la proyección sobre 1'= (1, 1, 1, 1, 1, 1)
-  b. Calcula el vector desviación y1 − x¯11. Relaciona su longitud a la desviación estándar.
-  c. Grafica (a escala) el triángulo formado por y1, x¯1 y y1 − x¯11. Identifica la longitud      de cada vector en tu gráfica.
+  a. Encuentra la proyección sobre $1'= (1, 1, 1, 1, 1, 1)$
+  b. Calcula el vector desviación $y_1 − \bar{x}_1$. Relaciona su longitud a la desviación estándar.
+  c. Grafica (a escala) el triángulo formado por $y_1$,$\bar{x}_1$  y $y_1 − \bar{x}_1$. Identifica la longitud      de cada vector en tu gráfica.
   d. Repetir los incisos (a) a (c) para X2
-  e. Grafica (a escala) los dos vectores desviación y1 − x¯11 y y2 − x¯21. Calcula el valor       del ángulo entre ellos.
+  e. Grafica (a escala) los dos vectores desviación $y_1 − $ y $y_2 − \bar{x}_21$. Calcula el valor       del ángulo entre ellos.
   f. Calcula la varianza muestral generalizada det(S) para estos datos e interpreta.
   g. Calcula la varianza muestral total tr(S) para estos datos e interpreta.
 
@@ -75,18 +106,145 @@ $$proy(x,y)= \frac{x'y}{y'y}y $$.
 data3 <- read.csv("data_q3.csv")
 names(data3) <- c("Equipo","x1","x2")
 X1.3 <- as.array(data3$x1)
-x2.3 <- as.array(data3$x2)
+X2.3 <- as.array(data3$x2)
 ```
 
 ```{r}
 # a)
-proy <-function(x,y){
+proy <-function(x,y)
+{
   (t(x)%*%y)[1]/(t(y)%*%y)[1]*y 
 }
 unos <- rep(1,6)
-proy(X1.3,unos)
+(proy1 <- proy(X1.3,unos))
+```
+Podemos observar que si dividimos la proyección obtenida es el vector $\bar{x}_11$.
+```{r}
+X1.3.mean <- mean(data3$x1)
+X1.3.mean
+proy1
 ```
 
+Para el inciso b) consideraremos que $y1$ es la primer columna de nuestros datos. Por lo cual procedmos de la siguiente manera para calcular el vector desviación.
+```{r}
+y1.3 <- as.array(data3$x1)
+(d1.3 <- y1.3 - X1.3.mean)
+```
+Ahora para ilustrar la relacion entre su longitud y la desviacion estandar hacemos lo siguiente
+```{r}
+norm_vec <- function(x)
+{
+  sqrt(sum(x^2))
+}
+norm_vec(d1.3)
+sd(X1.3)
+```
+Los elementos de $d_i = y_{1i} - x_{1i}$ son las medidas de desviacion de la i-esima variable con respecto a su media.
+Por lo cual, podemos ver lo siguiente.
+$$L_{di}^2 = d_i'd_i = \sum_{j = 1}^n(x_{ji}-\bar{x}_i)^2$$
+De donde se deduce que la longitud al cuadrado es proporcional a la varianza. Equivalentemente, la longitud del vector es proporcional a la desviación estandar. Por eso al dividir la longitud entre $\sqrt{n-1}$ obtuvimos la varianza.
+```{r}
+norm_vec(d1.3)/sqrt(5)
+sd(X1.3)
+```
+Para hacer el inciso c) reduciremos la complejidad del problema y nos limitaremos a solo usar las primeras dos entradas del vector $X_1$.
+```{r}
+x1.3 <- X1.3[c(1,2)]
+x1.3.mean <- proy(x1.3,c(1,1))
+d1 <- x1.3 - x1.3.mean
+
+#normalizamos
+x1.3 <- x1.3/norm_vec(x1.3)
+x1.3.mean <- x1.3.mean/norm_vec(x1.3.mean)
+d1 <- d1/norm_vec(d1)
+data.3c <-rbind(x1.3,x1.3.mean,d1)
+x3 <- as.array(data.3c[,1])
+y3 <- as.array(data.3c[,2])
+plot(x3,y3)
+polygon(x3,y3, border = 'red')
+```
+Repetimos lo mismo para la segunda columna de nuestro data frame para realizar el incizo d).
+
+Proyección sobre $1' = (1,1,1,1,1,1)$
+```{r}
+X2.3
+(proy2 <- proy(X2.3,unos))
+```
+Ahora calculamos el vector de desviacion. $y_2 - \bar{x}_2$ y verificamos su relacion con la desviacion estandar.
+```{r}
+(d2.3 <- X2.3 - proy2)
+norm_vec(d2.3)/sqrt(5)
+sd(X2.3)
+```
+Por ultimo, realizamos la grafica del triangulo formado por $y_2$ $\bar{x}_2$ y $y_2 - \bar{x}_2$.
+```{r}
+x2.3 <- X2.3[c(1,2)]
+x2.3.mean <- proy(x2.3,c(1,1))
+d2 <- x2.3 - x2.3.mean
+
+#normalizamos
+x2.3 <- x2.3/norm_vec(x2.3)
+x2.3.mean <- x2.3.mean/norm_vec(x2.3.mean)
+d2 <- d2/norm_vec(d2)
+data.3d <-rbind(x2.3,x2.3.mean,d2)
+x4 <- as.array(data.3d[,1])
+y4 <- as.array(data.3d[,2])
+plot(x4,y4)
+polygon(x4,y4, border = 'green')
+```
+Para el inciso e), graficaremos los dos vectores de desviación $y_1 - \bar{x}_1$ y $y_2 - \bar{x}_2$. Dada la complejidad del problema solo graficaremos las primeras dos entradas.
+```{r}
+
+#intento 1) con vector de dos dimensions, el problema es que es el mismo d1 y d2
+D1 <- c(0,d1[1])
+D2 <- c(0,d1[2])
+plot(D1,D2)
+arrows(D1[1],D2[1],D1[2],D2[2])
+
+
+#intento 2) con solo las primeras dos entradas
+D1.3 <- d1.3[c(1,2)]
+D2.3 <- d2.3[c(1,2)]
+D1.3 <- D1.3/ norm_vec(D1.3)
+D2.3 <- D2.3/ norm_vec(D2.3)
+D<- rbind(D1.3,D2.3)
+plot(D[,1],D[,2],type="n", xlim=c(0, 1), ylim=c(0,1))
+arrows(0,0,x1 = D[c(1,1)],y1 = D[c(1,2)])
+
+```
+Para calcular el angulo entre los dos vectores utilizaremos los vectores en seis dimensiones originales y la siguiente formula.
+$$ d_i'd_k = L_{d_i}L_{d_k}cos(\theta_{ik})$$
+por lo tanto
+$$cos(\theta_{ik}) = \frac{d_i'd_k }{L_{d_i}L_{d_k}}$$
+de donde 
+$$\theta_{ik} = cos^{-1}(\frac{d_i'd_k }{L_{d_i}L_{d_k}})$$
+
+```{r}
+v <- ((t(d1.3)%*%d2.3)[1]/((norm_vec(d1.3))*(norm_vec(d2.3))))
+(theta <- acos(v))
+```
+ahora para el inciso f) calcularemos la viaranza muestral generalizada.
+Dado que se cumple que $d_i'dj = nS_{ij}$ hacemos lo siguiente. Para primero calcular $S_n$
+```{r}
+#Duda si dividir entre 6 o 6-1
+s1.3 <- (t(d1.3)%*%d1.3)[1]/(6-1)
+s2.3 <- (t(d2.3)%*%d2.3)[1]/(6-1)
+sc.3 <- (t(d1.3)%*%d2.3)[1]/(6-1)
+
+Sn.3 <- matrix(c(s1.3,sc.3,sc.3,s2.3),2,2,byrow = TRUE)
+det(Sn.3)
+# comparando con la obtenida por R
+X3 <- cbind(data3$x1,data3$x2)
+S3 <- cov(X3)
+
+(det(S3))
+```
+
+para el inciso g) calculamos la $tr(S)$
+```{r}
+
+sum(diag(Sn.3))
+```
 
 ##Ejercicio 4
 4 Dibuja las elipsoides sólidas $\{{x|(x − \bar{x})'S^{-1}(x − \bar{x}) ≤ 1\}}$ para las tres matrices siguientes y determina los valores de los ejes mayores y menores.
