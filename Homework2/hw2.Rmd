@@ -2,7 +2,9 @@
 title: "hw2"
 author: "Pablo,Román,Sofía"
 date: "12/2/2020"
-output: pdf_document
+output:
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
@@ -10,26 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(knitr)
 ```
 
-```{r, echo = false}
-set.seed(20200208) #created at date
 
-# assigning number of excercises 
-(people_3quest <- sample(x = c("Pablo","Roman","Sof"),replace = F, size = 1)) #people with 4 questions, by alphabetic order
-
-
-# assinging excersises
-number_ex <- 1:10 #excercises
-cat("\nEjercicios Pablo: ")
-(ex_pablo <- sample(x = number_ex, replace = F, size = 4))
-number_ex <- number_ex[! number_ex %in% ex_pablo] #removing questions 
-
-cat("\nEjercicios Roman: ")
-(ex_roman <- sample(x = number_ex, replace = F, size = 3))
-number_ex <- number_ex[! number_ex %in% ex_roman] #removing questions 
-
-cat("\nEjercicios Sof: ")
-(ex_sof <- number_ex)
-```
 ##Ejercicio 1
 
 Un outlier se define como una observación que cae más allá de las barras del boxplot, las
@@ -163,6 +146,8 @@ y3 <- as.array(data.3c[,2])
 plot(x3,y3)
 polygon(x3,y3, border = 'red')
 ```
+
+
 Repetimos lo mismo para la segunda columna de nuestro data frame para realizar el incizo d).
 
 Proyección sobre $1' = (1,1,1,1,1,1)$
@@ -192,6 +177,8 @@ y4 <- as.array(data.3d[,2])
 plot(x4,y4)
 polygon(x4,y4, border = 'green')
 ```
+
+
 Para el inciso e), graficaremos los dos vectores de desviación $y_1 - \bar{x}_1$ y $y_2 - \bar{x}_2$. Dada la complejidad del problema solo graficaremos las primeras dos entradas.
 ```{r}
 
@@ -212,6 +199,8 @@ plot(D[,1],D[,2],type="n", xlim=c(0, 1), ylim=c(0,1))
 arrows(0,0,x1 = D[c(1,1)],y1 = D[c(1,2)])
 
 ```
+
+
 Para calcular el angulo entre los dos vectores utilizaremos los vectores en seis dimensiones originales y la siguiente formula.
 $$ d_i'd_k = L_{d_i}L_{d_k}cos(\theta_{ik})$$
 por lo tanto
@@ -252,20 +241,67 @@ a)$$S = \left(\begin{array}{cc}
 5 & 4\\
 4 & 5
 \end{array}\right)$$  
-Asumimos que la media es cero, es decir $\bar{x} = 0$. Esto hara que nuestras elipses esten centradas en el origen.
+Asumimos que la media es cero, es decir $\bar{x} = 0$. Esto hara que nuestras elipses esten centradas en el origen. Los ejesY procedemos de la siguiente forma.
 ```{r}
 S1 <- matrix(c(5,4,4,5),nrow = 2, byrow = T)
-(lambdas1 <- eigen(S1)$values)
+lambdas1 <- eigen(S1)$values
+(eje.mayor <- sqrt(max(lambdas1)))
+(eje.menor <- sqrt(min(lambdas1)))
+
+mu <- c(0, 0)  #vector medias
+DC <- chol(S1) # descomposición de Cholesky
+angl <- seq(0, 2*pi, length.out=200) 
+elipse.esc <- 1 * cbind(cos(angl), sin(angl)) %*% DC # elipse escalada
+elipseCentro <- sweep(elipse.esc, 2, mu, "+") # centramos en la media
+plot(elipseCentro, type="l", lwd=2, asp=1, xlab="x",ylab="y", main="S1")
+points(mu[1], mu[2], pch=4, lwd=2, col="red") 
+#Ejes en la dirección de las componentes principales:
+Sinv <- solve(S1) #inversa de la matriz de covarianzas
+DE <- eigen(Sinv) #descomposición espectral de Sinv
+s1 <- 2 #factor de escala
+s2 <- 1
+arrows(x0 = mu[1], y0 = mu[2],
+x1 = mu[1] + s2*DE$vectors[1,1], y1 = mu[2] + s2*DE$vectors[2,1], length = 0.1, col = "red")
+arrows(x0 = mu[1], y0 = mu[2],
+x1 = mu[1] + s1*DE$vectors[1,2], y1 = mu[2] + s1*DE$vectors[2,2], length = 0.1, col = "red")
 ```
+
+
+De donde el eje mayor es 3 y el menor es 1.
 
 b)$$S = \left(\begin{array}{cc} 
 5 & -4\\
 -4 & 5
 \end{array}\right)$$
+
 ```{r}
 S2 <- matrix(c(5,-4,-4,5),nrow = 2, byrow = T)
-(lambdas2 <- eigen(S2)$values)
+lambdas2 <- eigen(S2)$values
+(eje.mayor <- sqrt(max(lambdas2)))
+(eje.menor <- sqrt(min(lambdas2)))
+
+mu <- c(0, 0)  #vector medias
+DC <- chol(S2) # descomposición de Cholesky
+angl <- seq(0, 2*pi, length.out=200) 
+elipse.esc <- 1 * cbind(cos(angl), sin(angl)) %*% DC # elipse escalada
+elipseCentro <- sweep(elipse.esc, 2, mu, "+") # centramos en la media
+plot(elipseCentro, type="l", lwd=2, asp=1, xlab="x",ylab="y", main="b)")
+points(mu[1], mu[2], pch=4, lwd=2, col="red") 
+#Ejes en la dirección de las componentes principales:
+Sinv <- solve(S1) #inversa de la matriz de covarianzas
+DE <- eigen(Sinv) #descomposición espectral de Sinv
+s1 <- 2 #factor de escala
+s2 <- 1
+arrows(x0 = mu[1], y0 = mu[2],
+x1 = mu[1] + s1*DE$vectors[1,1], y1 = mu[2] + s1*DE$vectors[2,1], length = 0.1, col = "red")
+arrows(x0 = mu[1], y0 = mu[2],
+x1 = mu[1] + s2*DE$vectors[1,2], y1 = mu[2] + s2*DE$vectors[2,2], length = 0.1, col = "red")
 ```
+
+
+
+Al igual que en el inciso anterior el eje mayor es 3 y el menor es 1.
+
 
 c)$$S = \left(\begin{array}{cc} 
 3 & 0\\
@@ -273,19 +309,39 @@ c)$$S = \left(\begin{array}{cc}
 \end{array}\right)$$
 ```{r}
 S3 <- matrix(c(3,0,0,3),nrow = 2, byrow = T)
-(lambdas3 <- eigen(S3)$values)
+lambdas3 <- eigen(S3)$values
+(eje.mayor <- sqrt(max(lambdas3)))
+(eje.menor <- sqrt(min(lambdas3)))
+
+
+mu <- c(0, 0)  #vector medias
+DC <- chol(S3) # descomposición de Cholesky
+angl <- seq(0, 2*pi, length.out=200) 
+elipse.esc <- 1 * cbind(cos(angl), sin(angl)) %*% DC # elipse escalada
+elipseCentro <- sweep(elipse.esc, 2, mu, "+") # centramos en la media
+plot(elipseCentro, type="l", lwd=2, asp=1, xlab="x",ylab="y", main="c)")
+points(mu[1], mu[2], pch=4, lwd=2, col="red") 
+#Ejes en la dirección de las componentes principales:
+Sinv <- solve(S1) #inversa de la matriz de covarianzas
+DE <- eigen(Sinv) #descomposición espectral de Sinv
+s <- 1.5 #factor de escala
+arrows(x0 = mu[1], y0 = mu[2],
+x1 = mu[1] + s*DE$vectors[1,1], y1 = mu[2] + s*DE$vectors[2,1], length = 0.1, col = "red")
+arrows(x0 = mu[1], y0 = mu[2],
+x1 = mu[1] + s*DE$vectors[1,2], y1 = mu[2] + s*DE$vectors[2,2], length = 0.1, col = "red")
 ```
 
 
+
+En este caso tanto el eje menor como el mayor son 1.7
 ##Ejercicio 5
 
 Leyendo la base de datos.
 
 ```{r,'Excercise 5'}
 #read databse
-path <- 'C:/Users/Ryo/Documents/ITAM/8Semestre/EstadisticaAplicada3/Tareas/homeworkApl3_repo/Homework2/'
 file <- 'INEGIConstruccion2017.csv'
-df_inegi <- read.csv(file = paste(path,file,sep = ""),header = T,skip = 0) #skip lines
+df_inegi <- read.csv(file = paste(file,sep = ""),header = T,skip = 0) #skip lines
 
 ```
 
@@ -304,7 +360,7 @@ set.seed(42)
 file2 <- 'inegiClean.csv'
 
 #clean
-df_raw <- read.csv(paste(path,file2,sep=""),header = FALSE)
+df_raw <- read.csv(file2,header = FALSE)
 df_raw <- as.matrix(df_raw)
 
 #data is transposed
@@ -359,9 +415,46 @@ Sea $\underline{X} \sim \mathcal{N}_{3}(\underline{\mu},\Sigma)$ con $\underline
 - $\frac{(X_{1} +X_{2})}{2} \ \text{y} \ X_{3}$: __Independientes__, por el inciso anterior.
 - $X_{2} \ \text{y} \ X_{2} - \frac{5}{2}X_{1} - X_{3}$: __Dependientes__. Pues ambas variables _dependen_ del valor que tome $X_{2}$.
 
+##Ejercicio 7
+7. Sea $X \sim N(\mu,\Sigma)$ con $$\mu' = (2,-3,1)$$ y $$\Sigma = \left(\begin{array}{cc} 
+1 & 1 & 1\\
+1 & 3 & 2 \\
+1 & 2 & 2
+\end{array}\right)$$
 
+a) Encuentra la distribucion de $3X_1 - 2X_2 + X_3$
 
+Dado que $X \sim N$, sabemos que sus marginales tambien lo seran. Tambien podemos afirmar que cualquier combinacion lineal sigue tambien una distribucion normal. Para resolver este inciso utilizamos la siguiente fomula.
+$$ a'X \sim N(a'\mu, a'\Sigma a)$$
+Por lo cual obtenemos la media y varianza de la siguiente manera.
+```{r}
+v = c(3,-2,1)
+mu.7 <- c(2,-3,1)
+s.7 <- matrix(c(1,1,1,1,3,2,1,2,2), nrow = 3, ncol = 3, byrow = TRUE)
+(MU.7 <- as.numeric(t(v)%*%mu.7))
+(S.7 <- as.numeric(t(v)%*%s.7%*%v))
+```
+Por lo tanto $3X_1 - 2X_2 + X_3 \sim N(13,9)$
 
+b) Encontrar un vector $a$ tal que $X_2$ y $X_2 - a'(X_1,X_2)'$ sean independientes.
+
+Para resolver esto, basta con encontrar $a\epsilon \Re^2$ tal que la covarianza de $X_2$ y $X_2 - a'(X_1,X2)'$ sea cero.
+$$\begin{array}{l}
+cov(X_2,X_2 - a'(X_1,X_2)') = cov(X_2, X_2 - a_1X_1 + a_2X_2)\\
+= cov(X_2,X_2) - a_1cov(X_1,X_2) - a_2cov(X_1,X_2)\\
+= S_{22} -a_1S_{12} - a_2S_{22} 
+= 3 -a_1 - 3a_2
+\end{array}$$
+
+Por lo tanto 
+$$cov(X_2,X_2 - a'(X_1,X_2)') = 0 $$ 
+$$\Leftrightarrow  3 -a_1 - 3a_2 = 0$$
+$$\Leftrightarrow  a_1+3a_2 = 3$$
+Para lo cual existe toda una recta de combinaciones que cumple estas condiciones.
+Basta con tomar $$\begin{array}{l}
+a_1 = 0 \\
+a_2 = 1
+\end{array}$$
 ##Ejercicio 8
 
 Sea $y_{i} = Ax_{i} + b, \quad i = 1,\dots,n$, mostrar que

@@ -1,0 +1,11 @@
+---
+title: "hw3"
+author: "Pablo, Román, Sofia"
+date: "25/2/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
