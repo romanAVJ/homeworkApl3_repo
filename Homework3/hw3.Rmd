@@ -4,8 +4,23 @@ author: "Pablo, Román, Sofia"
 date: "25/2/2020"
 output: html_document
 ---
+```{r}
+set.seed(17032020) #created at date
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+number_ex <- 1:10 # 10 ejercicios
+cat("\nEjericios Pablo: ")
+(ex_pablo <- sample(x = number_ex,replace = F, size = 3))
+number_ex <- number_ex[! number_ex %in% ex_pablo] #Removing questions
+
+number_ex <- 1:10 # 10 ejercicios
+cat("\nEjericios Roman: ")
+(ex_roman <- sample(x = number_ex,replace = F, size = 3))
+number_ex <- number_ex[! number_ex %in% ex_roman] #Removing questions
+
+number_ex <- 1:10 # 10 ejercicios
+cat("\nEjericios Sofia: ")
+(ex_sofia <- sample(x = number_ex,replace = F, size = 3))
+number_ex <- number_ex[! number_ex %in% ex_sofia] #Removing questions
+
 ```
 
