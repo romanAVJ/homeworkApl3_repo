@@ -1,12 +1,21 @@
 <!DOCTYPE html>
 
+<<<<<<< HEAD
 <html>
+=======
+<html xmlns="http://www.w3.org/1999/xhtml">
+>>>>>>> feat-roman
 
 <head>
 
 <meta charset="utf-8" />
+<<<<<<< HEAD
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+=======
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+>>>>>>> feat-roman
 
 
 <meta name="author" content="Pablo, Román, Sofia" />
@@ -269,6 +278,10 @@ code {
 }
 img {
   max-width:100%;
+<<<<<<< HEAD
+=======
+  height: auto;
+>>>>>>> feat-roman
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -330,7 +343,10 @@ summary {
   border: none;
   display: inline-block;
   border-radius: 4px;
+<<<<<<< HEAD
   background-color: transparent;
+=======
+>>>>>>> feat-roman
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -343,6 +359,21 @@ summary {
 }
 </style>
 
+<<<<<<< HEAD
+=======
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+>>>>>>> feat-roman
 <!-- code folding -->
 
 
@@ -394,6 +425,7 @@ cat(&quot;\nEjericios Sofia: &quot;)</code></pre>
 <pre class="r"><code>(ex_sofia &lt;- sample(x = number_ex,replace = F, size = 3))</code></pre>
 <pre><code>## [1] 4 6 1</code></pre>
 <pre class="r"><code>number_ex &lt;- number_ex[! number_ex %in% ex_sofia] #Removing questions</code></pre>
+<<<<<<< HEAD
 <p>##Ejercicio 1</p>
 <pre class="r"><code>library(&#39;png&#39;)</code></pre>
 <div class="figure">
@@ -654,6 +686,145 @@ z$loadings</code></pre>
 ## SS loadings     1.000  1.000  1.000  1.000  1.000  1.000  1.000
 ## Proportion Var  0.143  0.143  0.143  0.143  0.143  0.143  0.143
 ## Cumulative Var  0.143  0.286  0.429  0.571  0.714  0.857  1.000</code></pre>
+=======
+<div id="ejercicio-2" class="section level1">
+<h1>Ejercicio 2</h1>
+<p>Obtenemos la matriz muestral de varianzas y covarianzas, luego obtenemos los componentes principales muestral.</p>
+<pre><code>## La matriz de varianzas y covarianzas es:</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">V1</th>
+<th align="right">V2</th>
+<th align="right">V3</th>
+<th align="right">V4</th>
+<th align="right">V5</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>V1</td>
+<td align="right">0.0016299</td>
+<td align="right">0.0008167</td>
+<td align="right">0.0008101</td>
+<td align="right">0.0004422</td>
+<td align="right">0.0005140</td>
+</tr>
+<tr class="even">
+<td>V2</td>
+<td align="right">0.0008167</td>
+<td align="right">0.0012294</td>
+<td align="right">0.0008276</td>
+<td align="right">0.0003869</td>
+<td align="right">0.0003109</td>
+</tr>
+<tr class="odd">
+<td>V3</td>
+<td align="right">0.0008101</td>
+<td align="right">0.0008276</td>
+<td align="right">0.0015561</td>
+<td align="right">0.0004873</td>
+<td align="right">0.0004625</td>
+</tr>
+<tr class="even">
+<td>V4</td>
+<td align="right">0.0004422</td>
+<td align="right">0.0003869</td>
+<td align="right">0.0004873</td>
+<td align="right">0.0008023</td>
+<td align="right">0.0004085</td>
+</tr>
+<tr class="odd">
+<td>V5</td>
+<td align="right">0.0005140</td>
+<td align="right">0.0003109</td>
+<td align="right">0.0004625</td>
+<td align="right">0.0004085</td>
+<td align="right">0.0007587</td>
+</tr>
+</tbody>
+</table>
+<pre><code>## 
+## 
+## Los componentes principales son:</code></pre>
+<pre><code>## 
+## Loadings:
+##    Comp.1 Comp.2 Comp.3 Comp.4 Comp.5
+## V1  0.561  0.739  0.126  0.284  0.208
+## V2  0.470         0.468 -0.688 -0.281
+## V3  0.547 -0.654  0.114  0.500       
+## V4  0.291 -0.113 -0.610 -0.438  0.582
+## V5  0.284        -0.617        -0.728
+## 
+##                Comp.1 Comp.2 Comp.3 Comp.4 Comp.5
+## SS loadings       1.0    1.0    1.0    1.0    1.0
+## Proportion Var    0.2    0.2    0.2    0.2    0.2
+## Cumulative Var    0.2    0.4    0.6    0.8    1.0</code></pre>
+<p>Veamos a detalle los componentes principales de los datos</p>
+<p>Vemos que por un “análisis de codo”, las primeras <strong>tres componentes principales</strong> son las que contiene la mayor variabilidad. Veamos las comunalidades de las CP para encontrar una interpretación.</p>
+<pre class="r"><code>CP$loadings</code></pre>
+<pre><code>## 
+## Loadings:
+##    Comp.1 Comp.2 Comp.3 Comp.4 Comp.5
+## V1  0.561  0.739  0.126  0.284  0.208
+## V2  0.470         0.468 -0.688 -0.281
+## V3  0.547 -0.654  0.114  0.500       
+## V4  0.291 -0.113 -0.610 -0.438  0.582
+## V5  0.284        -0.617        -0.728
+## 
+##                Comp.1 Comp.2 Comp.3 Comp.4 Comp.5
+## SS loadings       1.0    1.0    1.0    1.0    1.0
+## Proportion Var    0.2    0.2    0.2    0.2    0.2
+## Cumulative Var    0.2    0.4    0.6    0.8    1.0</code></pre>
+<p>Podemos ver que la primer componente es una ponderación de todas las acciones de la NYSE, mientras que la segunda componente distingue 3 grupos: La pprimera acción, las acciones 2 y 5 pero por último las acciones 3 y 4.</p>
+<p>Sabemos por el <em>teorema de Anderson</em> que <span class="math inline">\(\hat{\lambda} \sim \mathcal{N}(\lambda,2\lambda^{2}/n), \text{si} \quad n \to \infty\)</span>. Por lo que podemos construir un intervalo de confianza bonferronizado (ya que por teorema <span class="math inline">\(\lambda_{i} \perp \lambda_{j} \quad \forall i \neq j\)</span>.)</p>
+<p><span class="math display">\[\lambda_{i} \in \frac{\hat{\lambda_{i}}}{1 \pm z_{\alpha/2m}\sqrt{2/n}}.\]</span></p>
+<p>Por lo que tendremos un conjunto de intervalos de confianza al nivel del 90% para <span class="math inline">\(\lambda_{1,2,3}\)</span> dados por</p>
+<ol style="list-style-type: decimal">
+<li><p>0.0458595, 0.0853459</p></li>
+<li><p>0.0215263, 0.040061</p></li>
+<li><p>0.0207552, 0.038626</p></li>
+</ol>
+<p>Es importante ver que podemos <strong>reducir la dimensión</strong> de los datos en <em>3 componentes principales</em>, ya que en estas tres primeras componentes obtenemos el <span class="math inline">\(85\%\)</span> de la variablidad de los datos.</p>
+<div id="falta-replicar" class="section level2">
+<h2>FALTA REPLICAR</h2>
+</div>
+</div>
+<div id="ejercicio-3" class="section level1">
+<h1>Ejercicio 3</h1>
+<div id="a.-comparar-estimaciones" class="section level2">
+<h2>3a. Comparar estimaciones</h2>
+<pre class="r"><code>df &lt;- read.table(&#39;T85.DAT&#39;)
+
+#change of the last column
+df_alter &lt;- df
+df_alter[,5] &lt;- df[,5] * 10 # part of excerise 
+
+#3.a. Compare S_original vs S_altered
+CP_o &lt;- princomp(df)
+CP_a &lt;- princomp(df_alter)
+rel_error &lt;- norm(CP_o$scores - CP_a$scores, type = &#39;I&#39;)/norm(CP_o$scores, type = &#39;I&#39;)
+
+lambdas_rel_err &lt;- (CP_o$sdev - CP_a$sdev)/CP_o$sdev</code></pre>
+<p>Veamos:</p>
+<ul>
+<li>El <em>error relativo para los scores</em> de las CP’s, calculado por la <span class="math inline">\(|| . ||_{\infty}\)</span> es: 2.8311423</li>
+<li>El vector con los errores relativos para <span class="math inline">\(\lambda\)</span>’s estimadas es</li>
+</ul>
+<p>Se puede concluir que el cambio de escala SÍ afecta la estimación de los componentes principales, y por mucho.</p>
+</div>
+<div id="b.-interpretacion" class="section level2">
+<h2>3b. Interpretación</h2>
+<p>Para el caso de los datos originales, <span class="math inline">\(Y_{1}\)</span> es una ponderación de las 5 variables, dándole mayor peso a la primer variable. La segunda CP es una distinción entre la segunda variable y quinta variable contra la cuarta.</p>
+<p>En el caso de los datos modificados, <span class="math inline">\(Y_{1}^{&#39;}\)</span> se inclina <em>totalmente</em> hacia la última variable. Mientras que la segunda componente es un ponderaje de las primeras cuatro variables originales, se observa con mayor claridad en el <em>biplot</em>.</p>
+</div>
+<div id="c.-describir-efectos" class="section level2">
+<h2>3c. Describir efectos</h2>
+<p>Vemos que el cambio de escala distorciona por completo los componentes principales y por ende su interpretación. Es recomendable en este caso usar <span class="math inline">\(R\)</span>, o lo que es lo mismo, <em>estandarizar</em> los datos (studentizarlos).</p>
+</div>
+</div>
+>>>>>>> feat-roman
 
 
 
@@ -673,6 +844,7 @@ $(document).ready(function () {
 
 </script>
 
+<<<<<<< HEAD
 <!-- tabsets -->
 
 <script>
@@ -690,6 +862,8 @@ $(document).ready(function () {
 <!-- code folding -->
 
 
+=======
+>>>>>>> feat-roman
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>
   (function () {
