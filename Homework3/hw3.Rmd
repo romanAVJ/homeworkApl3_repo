@@ -4,7 +4,20 @@ author: "Pablo, Román, Sofia"
 date: "25/2/2020"
 output: pdf_document
 ---
+<<<<<<< HEAD
 ```{r,echo = FALSE, results='hide'}
+=======
+
+```{r setup, include =FALSE}
+
+library(knitr)
+library(factoextra)
+library(devtools)
+library(gridExtra)
+```
+
+```{r, echo = FALSE, include=FALSE}
+>>>>>>> feat-roman
 set.seed(17032020) #created at date
 
 number_ex <- 1:10 # 10 ejercicios
@@ -1112,7 +1125,140 @@ z$loadings
 ```
 
 
+<<<<<<< HEAD
 =======
 Como las unidades de globulos rojos y globulos blancos se miden (por lo genenral) en microlitros de sangre, mientras que variables como potacio se mide en milimoles por litro, sodio en miliequivalentes por litro, las plaquetas en  microlitros, bilirrubina en miligramos, etc. 
 Como no tenemos informacion concreta sobre las mediciones de estos componentes **la mejor opción es usar los componentes pricnipales de la matriz de correlación**.
 >>>>>>> pablos_branch
+=======
+
+# Ejercicio 2
+
+Obtenemos la matriz muestral de varianzas y covarianzas, luego obtenemos los componentes principales muestral.
+```{r cpm,echo=FALSE}
+#import data
+df <- read.table('T84.DAT',header = FALSE)
+
+#cov
+S <- cov(df)
+cat('La matriz de varianzas y covarianzas es: \n\n')
+kable(S)
+
+#PCA
+CP <- princomp(df)
+cat('\n\nLos componentes principales son: \n\n')
+CP$loadings
+
+```
+
+Veamos a detalle los componentes principales de los datos
+
+```{r graph CP, echo = FALSE}
+# contibution of pc
+g1pca <- fviz_contrib(X = CP, choice = 'var', fill = 'cyan', color = 'black')
+g2pca <- fviz_pca_var(X = CP)
+
+grid.arrange(g1pca, g2pca, nrow = 1)
+```
+
+Vemos que por un "análisis de codo", las primeras __tres componentes principales__ son las que contiene la mayor variabilidad.
+Veamos las comunalidades de las CP para encontrar una interpretación.
+```{r CP analisis, echo = FALSE}
+CP$loadings
+
+```
+Podemos ver que la primer componente es una ponderación de todas las acciones de la NYSE, mientras que la segunda componente distingue 3 grupos: La pprimera acción, las acciones 2 y 5 pero por último las acciones 3 y 4. 
+
+
+Sabemos por el _teorema de Anderson_ que $\hat{\lambda} \sim \mathcal{N}(\lambda,2\lambda^{2}/n), \text{si} \quad n \to \infty$. Por lo que podemos construir un intervalo de confianza bonferronizado (ya que por teorema $\lambda_{i} \perp \lambda_{j} \quad \forall i \neq j$.)
+
+$$\lambda_{i} \in \frac{\hat{\lambda_{i}}}{1 \pm z_{\alpha/2m}\sqrt{2/n}}.$$
+```{r ci bonferroni, echo = FALSE}
+n <- nrow(df)
+m <- 3 #first three eigenvalues
+alpha <- .1
+z_alphaM <- qnorm(p = alpha/(2*m),mean = 0,sd = 1)
+ci_list <- list()
+
+for(i in 1:m){
+  i_L <- CP$sdev[i]/(1 - z_alphaM * sqrt(2/n))
+  i_U <- CP$sdev[i]/(1 + z_alphaM * sqrt(2/n))
+  ci_list[[i]] <- c(i_L,i_U)
+}
+
+```
+
+Por lo que tendremos un conjunto de intervalos de confianza al nivel del 90% para $\lambda_{1,2,3}$ dados por 
+
+  1. `r ci_list[[1]]`
+  
+  2. `r ci_list[[2]]`
+
+  3. `r ci_list[[3]]`
+  
+Es importante ver que podemos __reducir la dimensión__ de los datos en _3 componentes principales_, ya que en estas tres primeras componentes obtenemos el $85\%$ de la variablidad de los datos.
+
+
+# Ejercicio 3
+## 3a. Comparar estimaciones
+```{r, echo = FALSE }
+df <- read.table('T85.DAT')
+
+#change of the last column
+df_alter <- df
+df_alter[,5] <- df[,5] * 10 # part of excerise 
+
+#3.a. Compare S_original vs S_altered
+CP_o <- princomp(df)
+CP_a <- princomp(df_alter)
+rel_error <- norm(CP_o$scores - CP_a$scores, type = 'I')/norm(CP_o$scores, type = 'I')
+
+lambdas_rel_err <- (CP_o$sdev - CP_a$sdev)/CP_o$sdev
+
+```
+
+Veamos:
+
+- El _error relativo para los scores_ de las CP's, calculado por la $|| . ||_{\infty}$ es: `r rel_error`
+- El vector con los errores relativos para $\lambda$'s estimadas es 
+```{r, echo=FALSE}
+kable(lambdas_rel_err, col.names = 'lambda')
+
+```
+
+Se puede concluir que el cambio de escala SÍ afecta la estimación de los componentes principales, y por mucho.
+
+## 3b. Interpretación
+```{r cpa analisis, echo=FALSE}
+#plots
+#scree
+g1_3b <- fviz_screeplot(CP_o)
+g2_3b <- fviz_screeplot(CP_a)
+
+grid.arrange(g1_3b, g2_3b, nrow = 1)
+
+#biplot
+g3_3b <- fviz_pca_biplot(CP_o)
+g4_3b <- fviz_pca_biplot(CP_a)
+
+
+grid.arrange(g3_3b,g4_3b, nrow = 1)
+
+#interpretation
+loadings(CP_o)
+loadings(CP_a)
+```
+
+Para el caso de los datos originales, $Y_{1}$ es una ponderación de las 5 variables, dándole mayor peso a la primer variable. La segunda CP es una distinción entre la segunda variable y quinta variable contra la cuarta.
+
+En el caso de los datos modificados, $Y_{1}^{'}$ se inclina _totalmente_ hacia la última variable. Mientras que la segunda componente es un ponderaje de las primeras cuatro variables originales, se observa con mayor claridad en el _biplot_.
+
+## 3c. Describir efectos
+Vemos que el cambio de escala distorciona por completo los componentes principales y por ende su interpretación. Es recomendable en este caso usar $R$, o lo que es lo mismo, _estandarizar_ los datos (studentizarlos).
+
+
+
+
+
+
+>>>>>>> feat-roman
