@@ -2,7 +2,7 @@
 title: "hw3"
 author: "Pablo, Román, Sofia"
 date: "25/2/2020"
-output: html_document
+output: pdf_document
 ---
 ```{r}
 set.seed(17032020) #created at date
@@ -23,9 +23,6 @@ cat("\nEjericios Sofia: ")
 number_ex <- number_ex[! number_ex %in% ex_sofia] #Removing questions
 
 ```
-
-
-
 
 
 
