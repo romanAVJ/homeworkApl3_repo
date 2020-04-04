@@ -2,13 +2,8 @@
 title: "hw3"
 author: "Pablo, Román, Sofia"
 date: "25/2/2020"
-output: html_document
+output: pdf_document
 ---
-```{r}
-library(dplyr)
-library(ggplot2)
-```
-
 ```{r,echo = FALSE, results='hide'}
 set.seed(17032020) #created at date
 
@@ -28,7 +23,10 @@ cat("\nEjericios Sofia: ")
 number_ex <- number_ex[! number_ex %in% ex_sofia] #Removing questions
 
 ```
-
+```{r}
+library(dplyr)
+library(ggplot2)
+```
 
 
 
