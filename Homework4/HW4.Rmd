@@ -1,0 +1,20 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r, include = FALSE}
+set.seed(20200420) #created at date
+# assigning number of excercises 
+(people_3quest <- sample(x = c("Roman","Pablo","Sof"),replace = F, size = 2)) #people with 3 questions, by alphabetic order
+# assinging excersises
+number_ex <- 1:10 #excercises
+cat("\nEjercicios Roman: ")
+(ex_luis <- sample(x = number_ex, replace = F, size = 4))
+number_ex <- number_ex[! number_ex %in% ex_luis] #removing questions 
+cat("\nEjercicios Pablo: ")
+(ex_roman <- sample(x = number_ex, replace = F, size = 3))
+number_ex <- number_ex[! number_ex %in% ex_roman] #removing questions 
+cat("\nEjercicios Sof: ")
+(ex_sof <- number_ex)
+```
