@@ -1,6 +1,8 @@
 ---
 title: "R Notebook"
-output: html_notebook
+output:
+  pdf_document: default
+  html_notebook: default
 ---
 
 ```{r, include = FALSE}
@@ -37,3 +39,82 @@ instalar <- function(paquete) {
 libs <- c( 'HistData') 
 lapply(libs, instalar)
 ```
+
+
+### Ejercicio 1
+Sea $$\rho_{12}  = \left(\begin{array}{cc} 
+\rho & \rho\\
+\rho & \rho
+\end{array}\right)$$ y $\rho_{11} = \rho_{22}$, 
+con $$\rho_{22}  = \left(\begin{array}{cc} 
+1 & \rho\\
+\rho & 1
+\end{array}\right)$$correspondientes a la correlacion de $X^{(1)}$ y $X^{(2)}$ donde cada una tiene dos componentes.
+
+##### a) Determine las variables canonicas correspondientes a la relacion canonica distinta de cero.
+Primero calculamos $\rho_{11}^{-1/2}$ y $\rho_{22}^{-1}$.
+
+$$\rho_{11}^{-1/2}  = \left(\begin{array}{cc} 
+\frac{1}{2}[(1+\rho)^{-1/2} + (1 - \rho)^{-1/2}] & \frac{1}{2}[(1+\rho)^{-1/2} - (1 - \rho)^{-1/2}]\\
+\frac{1}{2}[(1+\rho)^{-1/2} - (1 - \rho)^{-1/2}] & \frac{1}{2}[(1+\rho)^{-1/2} + (1 - \rho)^{-1/2}]
+\end{array}\right)$$.
+
+$$\rho_{22}^{-1}  = \left(\begin{array}{cc} 
+\frac{1}{(1-\rho^2)} & \frac{-\rho}{(1-\rho^2)}\\
+\frac{-\rho}{(1-\rho^2)} & \frac{1}{(1-\rho^2)}
+\end{array}\right)$$
+
+Al realizar el producto matricial $\rho_{11}^{-1/2}\rho_{12} \rho_{22}^{-1}\rho_{21}\rho_{11}^{-1/2}$ obtenemos la siguiente matriz.
+
+$$\left(\begin{array}{cc} 
+\frac{2\rho^2}{(1+\rho)^2} & \frac{2\rho^2}{(1+\rho)^2}\\
+\frac{2\rho^2}{(1+\rho)^2} & \frac{2\rho^2}{(1+\rho)^2}
+\end{array}\right)$$
+
+Ahora sacamos su egienvalor no asociado al espacio nulo y le sacmos raiz.
+
+$$\rho_{1}^* = \sqrt{\rho_{1}^{*2}} = \sqrt{\frac{4\rho^2}{(1+\rho)^2}} = \frac{2\rho}{(1+\rho)}$$
+Con $0 < \rho < 1$.
+El eigenvector asociado a $\rho_{1}^{*2}$ es el siguiente.
+
+$$e_{1}  = \left(\begin{array}{c} 
+1\\
+1
+\end{array}\right)$$
+Ahora calculamos $a_1$ de la siguiente forma
+
+$$a_1 = \rho_{11}^{-1/2}e_1 = \left(\begin{array}{cc} 
+\frac{1}{\sqrt{1+\rho}} \\
+\frac{1}{\sqrt{1+\rho}}
+\end{array}\right)$$
+Ahora para vemos si cumple la condicion de que $a_1' \rho_{11} a_1 = 1$ hacemos el siguiente calculo.
+
+$$a_1' \rho_{11} a_1 = \left(\begin{array}{cc} 
+\frac{1}{\sqrt{1+\rho}} & \frac{1}{\sqrt{1+\rho}}
+\end{array}\right)
+\left(\begin{array}{cc} 
+1 & \rho\\
+\rho & 1
+\end{array}\right)
+\left(\begin{array}{cc} 
+\frac{1}{\sqrt{1+\rho}} \\
+\frac{1}{\sqrt{1+\rho}}
+\end{array}\right) = 2$$
+
+Por lo cual normalizamos $a_1$ divivendolo entre $\sqrt{2}$ de donde obtenemos que
+
+$$a_1 = \left(\begin{array}{cc} 
+\frac{1}{\sqrt{2(1+\rho)}} \\
+\frac{1}{\sqrt{2(1+\rho)}}
+\end{array}\right)$$
+
+Ahora sabemos que $f_1$ es el eigenvector asociado al eigenvalor mas grande de $\rho_{22}^{-1/2} \rho_{21} \rho_{11}^{-1} \rho_{12} \rho_{22}^{-1/2}$ pero como $\rho_{11} = \rho_{22}$ y $\rho_{12} = \rho_{21}$. Tenemos que $f_1$ es el eigenvector asociado al eigenvalor mas grande de $\rho_{11}^{-1/2} \rho_{12} \rho_{22}^{-1} \rho_{21} \rho_{11}^{-1/2}$  que es lo mismo que decir que $f_1 = e_1$.
+
+Dandonos como resultado lo siguiente.
+
+$$U_1 = e_1'\rho_{11}^{-1/2} = a_1'X^{(1)} = \frac{1}{\sqrt{2(1+\rho)}}[X_1^{(1)} + X_2^{(1)}] $$
+$$U_1 = f_1'\rho_{22}^{-1/2} = b_1'X^{(2)} = \frac{1}{\sqrt{2(1+\rho)}}[X_1^{(2)} + X_2^{(2)}]$$
+
+##### b) Generalice el resultado para el caso dende $X^{(1)}$ tiene $p$ componentes y $X^{(2)}$ tiene $q$ con $q \geq p$
+
+
