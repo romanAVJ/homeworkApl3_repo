@@ -1,5 +1,5 @@
 ---
-title: "R Notebook"
+title: "Tarea 4. Estadística Aplicada 3"
 output: html_notebook
 ---
 
@@ -34,6 +34,80 @@ instalar <- function(paquete) {
                   warn.conflicts = FALSE)
     }
 }
-libs <- c( 'HistData') 
+libs <- c('rrcov', 'nortest', 'corrplot', 'CCA', 'candisc') 
 lapply(libs, instalar)
 ```
+
+
+##Ejercicio 3
+Determina de la muestra sus variables canónicas y sus correlaciones. Interpreta las cantidades. Son las primeras variables canonicas un buen resumen de sus conjuntos de variables?
+
+
+```{r}
+R.3<-cbind(c(1106.0, 396.7, 108.4, .787, 26.230), c(396.7, 2382.0, 1143.0, -.214, -23.96),c(108.4,1143.0,2136.0,2.189,-20.84), c(.787, -.214, 2.189, .016, .216), c(26.23, -23.960, -20.84, .216, 70.56) )
+R11.3<-R.3[4:5,4:5];R22.3<-R.3[1:3,1:3];R12.3<-R.3[4:5,1:3];R21.3<-t(R12.3)
+A.3 <- solve(R11.3) %*% R12.3 %*% solve(R22.3) %*% R21.3
+sA.3 <- eigen(A.3);sA.3
+```
+
+El primer eigenvalor es $\lambda_1 = 0.26764579$ y entonces la correlación entre las dos primeras variables canónicas es $\sqrt{\lambda_1} =  0.5173449$. La combinación lineal correspondiente a las variables del grupo de estructura es
+           a'y = 0.99 ∗ peso_relativo − 0.0024 ∗ glucosa_plasmática_en_ayunas 
+
+```{r}
+# Cálculo de la matriz B
+B.3 <- solve(R22.3) %*% R21.3 %*% solve(R11.3) %*% R12.3
+sB.3 <- eigen(B.3);sB.3
+```
+
+La correspondiente combinación lineal es:
+b´x = 0.43 ∗ int_glucosa - 0.47 ∗ resp_in_gluoral + 0.768 ∗ins_resis
+
+La variabilidad explicada por las primeras variables canónicas es 100 $X$ $\frac{\lambda_1}{\sum{\lambda_i}}=$94%, entonces las primeras variables canonicas son un buen resumen de sus conjuntos de variables.
+
+La primer variable canónica le da un peso mucho mayor al peso relativo que a la glucosa en ayunas. Mientras que, la seguda le da más pedo a la respuesta de glucosa oral que a la intolerancia a la glucosa y resistencia a la insulina. 
+
+La variable canónica sobre medicina le da más peso al resistencia de insulida. Entre más resistencia hay, mayor es la variable canónica.
+
+##Ejercicio 6
+Objetivo: determinar si las variables fisiológicas se relacionan de alguna forma con las
+variables de ejercicio.
+a.Analizar la matriz de correlaciones relevantes entre las variables de los dos grupos.
+b.Probar la hipótesis H0 : Σxy = 0
+
+```{r}
+data.6<-read.table("FitnessClubData.dat", header = T)
+```
+
+Analizar la matriz de correlaciones relevantes entre las variables de los dos grupos
+
+```{r}
+(R.6<-cor(data.6))
+```
+
+```{r}
+corrplot(R.6)
+```
+
+Parece que hay una correlación alta entre sentadillas y la medición de la cintura. También parecen correlacionadas las sentadillas con el peso y las lagartijas con la medida de la cintura.
+
+```{r}
+cor(data.6[,1:3], data.6[,4:6])
+```
+
+Las correlaciones entre las variables fisiológicas y de ejercicio son moderadas, la más grande es de -0.65 entre cintura y sentadillas. Hay correlaciones más grandes dentro del conjunto: 0.8702 entre peso y cintura, 0.6957 entre mentones y abdominales, y 0.6692 entre abdominales y saltos.
+
+Probar $H0: cov(x,y)=0$
+
+```{r}
+(cca <- stats::cancor(x = data.6[,1:3], y = data.6[,4:6]))
+```
+
+Las correlaciones entre las dos funciones canónicas, son 0.8, 0.2 y 0.73 respectivamente. Entonces, la primera correlación canónica de 0.7956 es mayor que cualquiera de las correlaciones entre conjuntos. 
+
+```{r}
+(cc <- cancor(x = data.6[,1:3], y = data.6[,4:6]))
+```
+
+Ahora, para probar la hipótesis necesitamos hacer una prueba. Tenemos con Wilks lambda con p-value de 0.06353>0.05, entonces no rechazamos la hipótesis nula. Por lo que no rechazamos la hipótesis nula de que no hay relación entre los dos conjuntos de variables y concluimos que los dos conjuntos de variables son independientes.
+
+
