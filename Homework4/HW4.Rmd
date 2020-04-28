@@ -1,5 +1,5 @@
 ---
-title: "R Notebook"
+title: "Homework4"
 output:
   pdf_document: default
   html_notebook: default
@@ -41,7 +41,7 @@ lapply(libs, instalar)
 ```
 
 
-### Ejercicio 1
+## Ejercicio 1
 Sea $$\rho_{12}  = \left(\begin{array}{cc} 
 \rho & \rho\\
 \rho & \rho
@@ -51,7 +51,7 @@ con $$\rho_{22}  = \left(\begin{array}{cc}
 \rho & 1
 \end{array}\right)$$correspondientes a la correlacion de $X^{(1)}$ y $X^{(2)}$ donde cada una tiene dos componentes.
 
-##### a) Determine las variables canonicas correspondientes a la relacion canonica distinta de cero.
+### a) Determine las variables canonicas correspondientes a la relacion canonica distinta de cero.
 Primero calculamos $\rho_{11}^{-1/2}$ y $\rho_{22}^{-1}$.
 
 $$\rho_{11}^{-1/2}  = \left(\begin{array}{cc} 
@@ -115,6 +115,121 @@ Dandonos como resultado lo siguiente.
 $$U_1 = e_1'\rho_{11}^{-1/2} = a_1'X^{(1)} = \frac{1}{\sqrt{2(1+\rho)}}[X_1^{(1)} + X_2^{(1)}] $$
 $$U_1 = f_1'\rho_{22}^{-1/2} = b_1'X^{(2)} = \frac{1}{\sqrt{2(1+\rho)}}[X_1^{(2)} + X_2^{(2)}]$$
 
-##### b) Generalice el resultado para el caso dende $X^{(1)}$ tiene $p$ componentes y $X^{(2)}$ tiene $q$ con $q \geq p$
+### b) Generalice el resultado para el caso dende $X^{(1)}$ tiene $p$ componentes y $X^{(2)}$ tiene $q$ con $q \geq p$
 
+
+## Ejercicio 2
+
+En un estudio sobre pobreza, cimen y disuacion, Perker y Smith[10] reportan las estadisticas sobre las suma de crimen en varios estados en los años 1970 y 1973. Una porcion  de la matriz de correlacion esta dada por
+
+$$R = \left(\begin{array}{cc} 
+R_{11} & R_{12} \\
+R_{21} & R_{22} 
+\end{array}\right) $$
+
+$$R_{11} = \left(\begin{array}{cc} 
+1.0 & .615 \\
+.615 & 1.0 
+\end{array}\right)$$
+
+$$R_{12} = \left(\begin{array}{cc} 
+-.111 & -.266 \\
+-.195 & -.085 
+\end{array}\right)$$
+
+$$R_{21} = \left(\begin{array}{cc} 
+-.111 & -.266 \\
+-.195 & -.085 
+\end{array}\right)$$
+
+con $$R_{22} = \left(\begin{array}{cc} 
+1.0 & -.269 \\
+-.269 & 1.0 
+\end{array}\right)$$
+
+Las variables son $X_1^{(1)}$ homicidios no primarios en 1973 ,$X_1^{(2)}$ homicidios primarios en 1973 (es decir homicidios que involucren a familiares) $X_2^{(1)}$ severidad del castigo (horas de servicio) en 1970, $X_2^{(2)}$ certeza del castigo (admisiones a prision dividido entre numero de homicidios).
+
+
+### a) Encuentras correlaciones canonicas de la muestra.
+```{r, echo=FALSE}
+#Declaramos la matriz de correlación.
+
+R2 = matrix(c(1.0, .615, -.111, -.266,
+              .615, 1.0, -.195, -.085,
+              -.111, -.195 ,1.0, -.269,
+              -.266, -.085,-.269, 1.0),
+               ncol = 4)
+
+R11.2 = R2[1:2,1:2]
+R12.2 = R2[1:2,3:4]
+R21.2 = R2[3:4,1:2]
+R22.2 = R2[3:4,3:4]
+
+```
+
+Para hacer esto lo haremos manualmente.
+Primero hacemos el calculo de la matriz $A = \Sigma_{11}^{-1}\Sigma_{12} \Sigma_{22}^{-1}\Sigma_{21}$. Y $B = \Sigma_{22}^{-1}\Sigma_{21} \Sigma_{11}^{-1}\Sigma_{12}$ Y sacaremos sus eigenvalores.
+
+```{r}
+#Opcion 1. Vista en clase
+#Cálculo de A (la matriz chica para estructura)
+A <- solve(R11.2) %*% R12.2 %*% solve(R22.2) %*% R21.2
+#Cálculo de B
+B <- solve(R22.2) %*% R21.2 %*% solve(R11.2) %*% R12.2
+sA <- eigen(A);
+sB <- eigen(B);
+print("Valores canonicos dados por A:")
+round(sqrt(sA$values),2)
+
+print("Valores canonicos dados por B:")
+round(sqrt(sB$values),2)
+
+```
+
+Obtenemos los valores canonicos(eigenvalores) $\rho_{1}^* = 0.33$, $\rho_{1}^* = 0.17$.
+
+### b) Determina los primeros pares canonicos $\hat{U}_1$ $\hat{V}_1$ e interprete los resultados.
+
+```{r}
+print("Dirección Canonica a :")
+round(sA$vectors[,1],3)
+print("Dirección Canonica b :")
+round(sB$vectors[,1],3)
+```
+Las dircciones canonicas son  $a = [1, -.003]$ y $b = [-.524, -0.851]$.
+Que nos dan como resultado las variables canonicas
+
+$$U_{1} = a'X = X_{1}^{(1)} - .003X_2^{(1)}$$
+$$V_{1} = b'X = -0.524X_{1}^{(2)} - .851X_2^{(2)}$$
+Podemos interpretar a $U_{1}$ como los homicidios no primarios en 1973, pues casi todo esta ponderado para $X_{1}^{(1)}$. Por otro lado $V_1$ podriamos verlo como un indice de castigo, pues es una ponderacion de ambas variables tratan sobre el castigo de los reos.
+
+```{r,echo = FALSE, include=FALSE}
+#Opcion 2. H de Johnsin & Wichern 
+Sx.eig <- eigen(R11.2)
+Sx.sqrt <- Sx.eig$vectors %*% diag(1/sqrt(Sx.eig$values)) %*% solve(Sx.eig$vectors)
+Sy.eig <- eigen(R22.2)
+Sy.sqrt <- Sy.eig$vectors %*% diag(1/sqrt(Sy.eig$values)) %*% solve(Sy.eig$vectors)
+
+#Cálculo de A
+HA <- Sy.sqrt %*% R21.2 %*%  solve(R11.2) %*% R12.2 %*% Sy.sqrt
+#Cálculo de B
+HB <- Sx.sqrt %*% R12.2 %*%  solve(R22.2) %*% R21.2 %*% Sx.sqrt
+
+sHA <- eigen(HA);
+sHB <- eigen(HB);
+
+a1 = Sx.sqrt %*% sHA$vectors[,1]
+b1 = Sy.sqrt %*% sHB$vectors[,1]
+
+print("Valores canonicos dados por A:")
+round(sqrt(sHA$values),2)
+print("Dirección Canonica a :")
+a1
+print("Valores canonicos dados por B:")
+round(sqrt(sHB$values),2)
+print("Dirección Canonica b :")
+b1
+
+#Por alguna razon los resultados son muy extraños, creo que deberian normalizarse y por lo mismo nos quedaremos con los procedimientos vistos en clase.
+```
 
