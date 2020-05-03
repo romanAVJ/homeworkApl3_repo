@@ -453,7 +453,7 @@ pc_matrix <- df1[,pc_lis]
 
 ```{r CCA types}
 #CCA analisis
-cca1 <- cancor(x = fa_matrix, y = pc_matrix, xcenter = FALSE, ycenter = FALSE) 
+cca1 <- stats::cancor(x = fa_matrix, y = pc_matrix, xcenter = FALSE, ycenter = FALSE) 
 cca2 <- cc(fa_matrix, pc_matrix)
 # cca3
 S <- cov(df1)
@@ -606,7 +606,7 @@ pc_lis <- c('contact','days','duration','poutcome')
 pc_matrix <- df2[,pc_lis]
 
 #CCA analisis
-cca2 <- cancor(x = bank_matrix, y = pc_matrix, xcenter = FALSE, ycenter = FALSE) 
+cca2 <- stats::cancor(x = bank_matrix, y = pc_matrix, xcenter = FALSE, ycenter = FALSE) 
 
 cca2
 ```
