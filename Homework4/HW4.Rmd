@@ -1,5 +1,4 @@
 ---
-title: "Homework4"
 output:
   pdf_document: default
   html_notebook: default
@@ -845,6 +844,100 @@ score_p3
 Vemos que el score más pequeño es el de la población $\prod_{3}$ , por lo que _clasificamos_ al estudiante nuevo $x_0$ como alguien en el _border line_ .
 
 La clasificación _sí_ coincide con la del libro.
+
+##Ejercicio 9
+
+```{r}
+data("hemophilia")
+plot(hemophilia$AHFactivity)
+plot(hemophilia$AHFantigen)
+```
+
+a. Investiga si son datos normales bivariados
+
+```{r}
+ad.test(hemophilia$AHFactivity)
+ad.test(hemophilia$AHFantigen)
+```
+Con una significancia alta, tenemos que se prueba la hipótesis de normalidad bivariada.
+
+b. Obtener la función lineal muestral distriminante 
+
+Recordar que el análisis discriminante lineal hace exactamente lo mismo que correlación
+canónica.
+
+```{r}
+(mcd <- CovMcd(hemophilia[,1:2]))
+col <- ifelse(hemophilia$gr == "carrier", 2, 3) 
+plot(mcd, which="tolEllipsePlot", class=TRUE, col=col)
+plot(AHFantigen~AHFactivity, data=hemophilia, col=as.numeric(as.factor(gr))+1)
+
+```
+
+La gráfica anterior indica que es apropiado hacer un análisis discriminante lineal. En este diagrama, los puntos verdes representan a las sanas, mientras que los portadores de hemofilia se representan con puntos de color rojo.
+
+```{r}
+datos_tidy <- melt(hemophilia, value.name = "valor")
+aggregate(formula = valor ~ gr + variable, data = datos_tidy,  FUN = function(x){shapiro.test(x)$p.value})
+```
+
+```{r}
+
+```
+
+Todos tienen p-value mayor a 0.05, entonces no se rechaza y decimos que son todos normales.
+
+%%Análisis discriminante lineal
+
+ 
+b. Función discriminante lineal de asumiendo probabilidades iguales
+
+```{r}
+par(mfcol = c(2, 2))
+for (k in 1:2) {
+  j0 <- names(hemophilia)[k]
+  #br0 <- seq(min(datos[, k]), max(datos[, k]), le = 11)
+  x0 <- seq(min(hemophilia[, k]), max(hemophilia[, k]), le = 50)
+  for (i in 1:2) {
+    i0 <- levels(hemophilia$gr)[i]
+    x <- hemophilia[hemophilia$gr == i0, j0]
+    hist(x, proba = T, col = grey(0.8), main = paste("tipo", i0),
+    xlab = j0)
+    lines(x0, dnorm(x0, mean(x), sd(x)), col = "red", lwd = 2)
+  }
+}
+```
+
+
+
+
+```{r}
+modelo_lda <- lda(formula = gr ~ AHFactivity + AHFantigen, data = hemophilia)
+modelo_lda
+```
+
+
+c. Usando la función anterior clasificar las nuevas observaciones
+
+```{r}
+nuevas_observaciones <- data.frame(AHFactivity = c(-.112,-.059,.064,-.043,-.05,-.094,-.123,-.011,-.21,-.126), AHFantigen = c(-.279,-.068,.012,-.052,-.098,-.113,-.143,-.037,-.09,-.019) )
+```
+
+
+```{r}
+predict(object = modelo_lda, newdata = nuevas_observaciones)
+```
+
+
+```{r}
+predicciones <- predict(object = modelo_lda, newdata = hemophilia[, c(1,2)], method = "predictive")
+table(hemophilia$gr, predicciones$class, dnn = c("Clase real", "Clase predicha"))
+```
+
+```{r}
+trainig_error <- mean(hemophilia$gr != predicciones$class) * 100
+paste("trainig_error=", trainig_error, "%")
+```
 
 
 
