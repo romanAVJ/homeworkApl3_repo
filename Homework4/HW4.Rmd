@@ -1,7 +1,9 @@
 ---
 output:
-  pdf_document: default
   html_notebook: default
+  html_document:
+    df_print: paged
+  pdf_document: default
 ---
 
 ```{r, include = FALSE}
@@ -478,7 +480,6 @@ Veamos las correlaciones canónicas para cada uno de los paquetes:
 cca1$cor
 cca2$cor
 corCCA3
-
 ```
 
 Observamos que _cancor_ muestra una $\rho_{1} = $ `r cca1$cor[1]` que es altísima a comparación de las demás.
@@ -812,7 +813,7 @@ Clasificaremos el siguiente alumno $x_{0}^{T} = [3.21 \quad 497]$.
 
 ```{r}
 #new obs
-x0 <- c(3.21, 497)
+x.9 <- c(3.21, 497)
 
 # discriminants
 
@@ -824,7 +825,7 @@ a1 <- as.matrix(sWB$vectors[,1]) / v1[1]
 a2 <- as.matrix(sWB$vectors[,2]) / v2[1]
 
 # discriminants
-y <- t(cbind(a1,a2)) %*% x0
+y <- t(cbind(a1,a2)) %*% x.9
 mu_y_p1 <- t(cbind(a1,a2)) %*% means[[1]]
 mu_y_p2 <- t(cbind(a1,a2)) %*% means[[2]]
 mu_y_p3 <- t(cbind(a1,a2)) %*% means[[3]]
@@ -867,9 +868,9 @@ Recordar que el análisis discriminante lineal hace exactamente lo mismo que cor
 canónica.
 
 ```{r}
-(mcd <- CovMcd(hemophilia[,1:2]))
+(mc.9 <- Covmc.9(hemophilia[,1:2]))
 col <- ifelse(hemophilia$gr == "carrier", 2, 3) 
-plot(mcd, which="tolEllipsePlot", class=TRUE, col=col)
+plot(mc.9, which="tolEllipsePlot", class=TRUE, col=col)
 plot(AHFantigen~AHFactivity, data=hemophilia, col=as.numeric(as.factor(gr))+1)
 
 ```
@@ -877,8 +878,8 @@ plot(AHFantigen~AHFactivity, data=hemophilia, col=as.numeric(as.factor(gr))+1)
 La gráfica anterior indica que es apropiado hacer un análisis discriminante lineal. En este diagrama, los puntos verdes representan a las sanas, mientras que los portadores de hemofilia se representan con puntos de color rojo.
 
 ```{r}
-datos_tidy <- melt(hemophilia, value.name = "valor")
-aggregate(formula = valor ~ gr + variable, data = datos_tidy,  FUN = function(x){shapiro.test(x)$p.value})
+datos.9 <- melt(hemophilia, value.name = "valor")
+aggregate(formula = valor ~ gr + variable, data = datos.9,  FUN = function(x){shapiro.test(x)$p.value})
 ```
 
 ```{r}
@@ -895,15 +896,15 @@ b. Función discriminante lineal de asumiendo probabilidades iguales
 ```{r}
 par(mfcol = c(2, 2))
 for (k in 1:2) {
-  j0 <- names(hemophilia)[k]
+  l <- names(hemophilia)[k]
   #br0 <- seq(min(datos[, k]), max(datos[, k]), le = 11)
-  x0 <- seq(min(hemophilia[, k]), max(hemophilia[, k]), le = 50)
+  x.9 <- seq(min(hemophilia[, k]), max(hemophilia[, k]), le = 50)
   for (i in 1:2) {
     i0 <- levels(hemophilia$gr)[i]
-    x <- hemophilia[hemophilia$gr == i0, j0]
+    x <- hemophilia[hemophilia$gr == i0, l]
     hist(x, proba = T, col = grey(0.8), main = paste("tipo", i0),
-    xlab = j0)
-    lines(x0, dnorm(x0, mean(x), sd(x)), col = "red", lwd = 2)
+    xlab = l)
+    lines(x.9, dnorm(x.9, mean(x), sd(x)), col = "red", lwd = 2)
   }
 }
 ```
@@ -912,8 +913,8 @@ for (k in 1:2) {
 
 
 ```{r}
-modelo_lda <- lda(formula = gr ~ AHFactivity + AHFantigen, data = hemophilia)
-modelo_lda
+modelo_lda.9 <- lda(formula = gr ~ AHFactivity + AHFantigen, data = hemophilia)
+modelo_lda.9
 ```
 
 
@@ -925,12 +926,12 @@ nuevas_observaciones <- data.frame(AHFactivity = c(-.112,-.059,.064,-.043,-.05,-
 
 
 ```{r}
-predict(object = modelo_lda, newdata = nuevas_observaciones)
+predict(object = modelo_lda.9, newdata = nuevas_observaciones)
 ```
 
 
 ```{r}
-predicciones <- predict(object = modelo_lda, newdata = hemophilia[, c(1,2)], method = "predictive")
+predicciones <- predict(object = modelo_lda.9, newdata = hemophilia[, c(1,2)], method = "predictive")
 table(hemophilia$gr, predicciones$class, dnn = c("Clase real", "Clase predicha"))
 ```
 
