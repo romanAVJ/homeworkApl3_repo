@@ -38,7 +38,7 @@ instalar <- function(paquete) {
     }
 }
 libs <- c( 'HistData', 'rrcov', 'nortest', 'corrplot', 'CCA', 
-'candisc','car','dummies','corrplot','knitr','ggplot2') 
+'candisc','car','dummies','corrplot','knitr','ggplot2', 'MASS', 'reshape2') 
 lapply(libs, instalar)
 ```
 
@@ -916,7 +916,7 @@ Recordar que el análisis discriminante lineal hace exactamente lo mismo que cor
 canónica.
 
 ```{r}
-(mc.9 <- Covmc.9(hemophilia[,1:2]))
+(mc.9 <- CovMcd(hemophilia[,1:2]))
 col <- ifelse(hemophilia$gr == "carrier", 2, 3) 
 plot(mc.9, which="tolEllipsePlot", class=TRUE, col=col)
 plot(AHFantigen~AHFactivity, data=hemophilia, col=as.numeric(as.factor(gr))+1)
@@ -930,35 +930,12 @@ datos.9 <- melt(hemophilia, value.name = "valor")
 aggregate(formula = valor ~ gr + variable, data = datos.9,  FUN = function(x){shapiro.test(x)$p.value})
 ```
 
-```{r}
-
-```
-
 Todos tienen p-value mayor a 0.05, entonces no se rechaza y decimos que son todos normales.
 
 %%Análisis discriminante lineal
 
  
 b. Función discriminante lineal de asumiendo probabilidades iguales
-
-```{r}
-par(mfcol = c(2, 2))
-for (k in 1:2) {
-  l <- names(hemophilia)[k]
-  #br0 <- seq(min(datos[, k]), max(datos[, k]), le = 11)
-  x.9 <- seq(min(hemophilia[, k]), max(hemophilia[, k]), le = 50)
-  for (i in 1:2) {
-    i0 <- levels(hemophilia$gr)[i]
-    x <- hemophilia[hemophilia$gr == i0, l]
-    hist(x, proba = T, col = grey(0.8), main = paste("tipo", i0),
-    xlab = l)
-    lines(x.9, dnorm(x.9, mean(x), sd(x)), col = "red", lwd = 2)
-  }
-}
-```
-
-
-
 
 ```{r}
 modelo_lda.9 <- lda(formula = gr ~ AHFactivity + AHFantigen, data = hemophilia)
