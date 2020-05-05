@@ -109,6 +109,47 @@ Dandonos como resultado lo siguiente.
 $$U_1 = e_1'\rho_{11}^{-1/2} = a_1'X^{(1)} = \frac{1}{\sqrt{2(1+\rho)}}[X_1^{(1)} + X_2^{(1)}] $$
 $$U_1 = f_1'\rho_{22}^{-1/2} = b_1'X^{(2)} = \frac{1}{\sqrt{2(1+\rho)}}[X_1^{(2)} + X_2^{(2)}]$$
 ### b) Generalice el resultado para el caso dende $X^{(1)}$ tiene $p$ componentes y $X^{(2)}$ tiene $q$ con $q \geq p$
+
+Para la generalización corresponiende, podemos escribir la matriz $\Sigma_{XY} = \rho 1_p 1_q^T$ y $\Sigma_{YX} = \rho 1_q 1_p^T$ con $1_k \in \mathbb{R}^k$ un vector de unos. De donde obtenemos que 
+$$\Sigma_X = [1+(p-1)\rho]1_{p}$$
+$$\Sigma_X^{-1} = \frac{1}{1+(p-1)\rho}1_{p}$$ 
+Analogamente
+$$\Sigma_Y = [1+(q-1)\rho]1_{q}$$
+$$\Sigma_Y^{-1} = \frac{1}{1+(q-1)\rho}1_{q}$$ 
+De donde 
+
+$$A = \Sigma_{Y}^{-1}\Sigma_{Y}\Sigma_{X}\Sigma_{X}^{-1}\Sigma_{XY}$$
+$$\Rightarrow A = \Sigma_{Y}^{-1}(\rho1_q1_p^T)\Sigma_{X}^{-1}(\rho1_p1_q^T)$$
+$$\Rightarrow A = \rho^2 (\Sigma_{Y}^{-1}1_q)1_p^T(\Sigma_{X}^{-1}1_p)1_q^T$$
+$$\Rightarrow A = \rho^2 (\Sigma_{Y}^{-1}1_q)1_p^T(\Sigma_{X}^{-1}1_p)1_q^T$$
+$$\Rightarrow A = \rho^2 (\frac{1}{1+(q-1)\rho}1_{q})1_p^T(\frac{1}{1+(p-1)\rho}1_{p})1_q^T$$
+
+$$\Rightarrow A = \frac{\rho^2p}{[1+(q-1)\rho][1+(p-1)\rho]}1_q1_q^T$$
+$$\therefore A = K_a 1_{q \times q}$$
+con $K_a = \frac{\rho^2p}{[1+(q-1)\rho][1+(p-1)\rho]}$ y $1_{q \times q}$ la matriz llena de unos en cada entrada de $q \times q$.
+
+Encontramos ahora los egigenvalores no asociados al cero y sus eigenvectores espectivos. Como K es una constante basta con sacar el dereminante de $1_q1_q^T$ y multipicarlo por la constante $K_a$.
+Para esto sera necesario usar el siguiente resultado.
+$\forall x,y \in \mathbb{R}^n $ con $x \neq 0$, entonces $\exists Q \in \mathbb{R}^{n \times n} $ s.p.d tal que $Qe_1 = x$ y $y^TQ = Z^T$ con $e1$ el vector canonico. Donde se cumple lo siguiente.
+$$det(xy^T - \lambda I ) = (-\lambda)^{n-1}(z_1 - \lambda)$$
+con $z = y^Tx$
+Entonces
+
+$$det(1_q1_q^T-\lambda I) = 0 \iff \lambda = q$$
+$$\iff (-\lambda)^{q-1}(z_1 - \lambda)$$
+$$\iff \lambda = z_1$$
+$$\iff \lambda = 1_q^T1_q$$
+$$\iff \lambda = q$$
+Su vector asociado se calcula de la siguiente forma.
+
+$$(1_q1_q^T)a = \lambda a$$
+$$\iff \frac{(1_q^Ta)}{\lambda}1_q = a$$
+$$\therefore a = c1_q$$
+con $c \in \mathbb{R}$
+De forma que el el eigenvector no asociado al espacio nulo es $\lambda_a =  K_aq$ con eigenvector asociado $a = 1_q$ Analogo para $B$, su eigenvalor es $\lambda_b = K_bp$ con eigenvector asociado $b = 1_p$
+con $K_b =  = \frac{\rho^2pq{[1+(q-1)\rho][1+(p-1)\rho]}$
+
+
 ## Ejercicio 2
 En un estudio sobre pobreza, cimen y disuacion, Perker y Smith[10] reportan las estadisticas sobre las suma de crimen en varios estados en los años 1970 y 1973. Una porcion  de la matriz de correlacion esta dada por
 $$R = \left(\begin{array}{cc} 
@@ -202,7 +243,7 @@ b1
 #Por alguna razon los resultados son muy extraños, creo que deberian normalizarse y por lo mismo nos quedaremos con los procedimientos vistos en clase.
 ```
 
-##Ejercicio 3
+## Ejercicio 3
 Determina de la muestra sus variables canónicas y sus correlaciones. Interpreta las cantidades. Son las primeras variables canonicas un buen resumen de sus conjuntos de variables?
 
 
@@ -231,7 +272,7 @@ La primer variable canónica le da un peso mucho mayor al peso relativo que a la
 
 La variable canónica sobre medicina le da más peso al resistencia de insulida. Entre más resistencia hay, mayor es la variable canónica.
 
-# Ejercicio 4: Análisis CCA a mano
+## Ejercicio 4: Análisis CCA a mano
 
 En este ejercicio del libro Wishern, analizaremos la estructura de correlaciones canónicas de un decatlón.
 
@@ -246,7 +287,7 @@ corrplot(R)
 
 ```
 
-##CCA Analisis para un subconjunto de variables
+### CCA Analisis para un subconjunto de variables
 
 Se analizarán las relaciones entre _100m_, _400m_, _salto_ contra _disco_, _javalina_, _lanzamiento de bala_.
 
@@ -284,7 +325,7 @@ sB$vectors[,1]
 
 
 
-# Ejercicio 5: Datos marketing.
+## Ejercicio 5: Datos marketing.
 
 ```{r download_dbb}
 #descargar BDD
@@ -376,9 +417,10 @@ df_main$poutcome <- ifelse( df_main$poutcome == 'success',1,0)
 
 Primero veamos como se relacionan las variables
 
-## CCA Atributos físicos vs Campaña pasada
+### CCA Atributos físicos vs Campaña pasada
 
 ```{r}
+
 #create dumms
 create_dums <- function(df, cols){
   #create dumms
@@ -438,7 +480,7 @@ Vemos que las correlaciones entre las variables son muy bajas, por lo que un an�
 
 Sin embargo, haremos un intento por ver la relación entre ellas.
 
-## Análisis de CCA
+### Análisis de CCA
 
 _NOTA_:
 Curiosamente los outputs de _cancor_ , _cc_ y la formulación directa por eigenvalores y eigenvectores da muy distinta. A continuación se mostrarán los resultados. 
@@ -562,7 +604,7 @@ plot(x = z2, y = w2, col = df1[,'poutcome'] + 1)
 
 ```
 
-## CCA Banco vs Campaña pasada
+### CCA Banco vs Campaña pasada
 
 ```{r}
 # set of variables
@@ -649,7 +691,7 @@ plot(x = z2, y = w2, col = df2[,'poutcome'] + 1)
 ```
 
 
-##Ejercicio 6
+## Ejercicio 6
 Objetivo: determinar si las variables fisiológicas se relacionan de alguna forma con las
 variables de ejercicio.
 a.Analizar la matriz de correlaciones relevantes entre las variables de los dos grupos.
@@ -693,9 +735,9 @@ Ahora, para probar la hipótesis necesitamos hacer una prueba. Tenemos con Wilks
 
 
 
-# Ejercicio 8: GPA & GMAT
+## Ejercicio 8: GPA & GMAT
 
-## A) Calcular las medias muestrales y la varianza agrupada
+### A) Calcular las medias muestrales y la varianza agrupada
 
 ```{r}
 #pooled variance
@@ -774,7 +816,7 @@ Sp
 
 
 
-## $W$ y $B$, discriminante generalizado. 
+### $W$ y $B$, discriminante generalizado. 
 
 
 
@@ -846,7 +888,7 @@ Vemos que el score más pequeño es el de la población $\prod_{3}$ , por lo que
 
 La clasificación _sí_ coincide con la del libro.
 
-##Ejercicio 9
+## Ejercicio 9
 
 ```{r}
 data("hemophilia")
