@@ -2,23 +2,6 @@
 title: "Tarea 4. Estadística Aplicada 3"
 output: html_notebook
 ---
-
-```{r, include = FALSE}
-set.seed(20200420) #created at date
-# assigning number of excercises 
-(people_3quest <- sample(x = c("Roman","Pablo","Sof"),replace = F, size = 2)) #people with 3 questions, by alphabetic order
-# assinging excersises
-number_ex <- 1:10 #excercises
-cat("\nEjercicios Roman: ")
-(ex_luis <- sample(x = number_ex, replace = F, size = 4))
-number_ex <- number_ex[! number_ex %in% ex_luis] #removing questions 
-cat("\nEjercicios Pablo: ")
-(ex_roman <- sample(x = number_ex, replace = F, size = 3))
-number_ex <- number_ex[! number_ex %in% ex_roman] #removing questions 
-cat("\nEjercicios Sof: ")
-(ex_sof <- number_ex)
-```
-
 ```{r setup, include=FALSE, results=FALSE}
 #Instalar las librerias necesarias y cargarlas
 instalar <- function(paquete) {
@@ -34,7 +17,12 @@ instalar <- function(paquete) {
                   warn.conflicts = FALSE)
     }
 }
+<<<<<<< Updated upstream
 libs <- c('rrcov', 'nortest', 'corrplot', 'CCA', 'candisc') 
+=======
+libs <- c( 'HistData', 'rrcov', 'nortest', 'corrplot', 'CCA', 
+'candisc','car','dummies','corrplot','knitr','ggplot2', 'reshape2', 'MASS') 
+>>>>>>> Stashed changes
 lapply(libs, instalar)
 ```
 
@@ -110,4 +98,238 @@ Las correlaciones entre las dos funciones canónicas, son 0.8, 0.2 y 0.73 respec
 
 Ahora, para probar la hipótesis necesitamos hacer una prueba. Tenemos con Wilks lambda con p-value de 0.06353>0.05, entonces no rechazamos la hipótesis nula. Por lo que no rechazamos la hipótesis nula de que no hay relación entre los dos conjuntos de variables y concluimos que los dos conjuntos de variables son independientes.
 
+<<<<<<< Updated upstream
+=======
+## Ejercicio 7
+
+### a) Usano diferentes simbolos para cada grupo, plotea los pares de datos $(x_1,x_2)$ $(x_1,x_3)$ y $(x_1,x_4)$ ¿Parece que los datos son aproximados a una normal bivariada para cualquiera de estos pares?
+
+### b) Usa $n_1 = 21$ pares de observaciones $(x_1,x_2)$
+
+
+
+## Ejercicio 8: GPA & GMAT
+
+### A) Calcular las medias muestrales y la varianza agrupada
+
+```{r}
+#pooled variance
+
+#functions
+ni_s <- function(x, population){
+  
+  pis <- unique(x[,population])
+  ni <- c()
+  for(pi in pis) 
+    ni <- c(ni,length(which(x[,population] == pi)))
+  return(ni)
+}
+
+#variance
+Si_s <- function(x, population){
+  Si <- list()
+  pis <- unique(x[,population])
+  
+
+  for(pi in pis) {
+    Si[[pi]] <- cov(x[x[,population] == pi,-population])
+
+  }
+  return(Si)
+  
+}
+
+Spool <-  function(df, population = 3){
+  #number of populations
+  m <- length(unique(df[,population]))
+
+  #size ni
+  ni_vec <- ni_s(df, population)
+
+  #individual variance
+  Si_list <- Si_s(df, population)
+  
+  #pool variance
+  #upper part of the fraction
+  Spool <- matrix(0,nrow = 2,ncol = 2)
+
+  for(i in 1:m)
+    Spool <- Spool +  (ni_vec[i] - 1)[1]  *Si_list[[i]] 
+  
+  #lower part (constant)
+  Spool <- Spool / sum(ni_vec -1)
+  
+  return(Spool)
+}
+
+
+#read data
+df_r <- read.table('T11-6.DAT')
+n <- dim(df_r)[1]
+
+
+#means and pooled variance
+# mean
+means <- list()
+for(i in 1:3) means[[i]] <- colMeans(df_r[ df_r[,3] == i ,c(1,2)])
+means
+
+#pooled variance
+Sp <- Spool(df_r)
+
+#print means
+# knitr::kable(means, col.names = 'population_mean')
+
+cat("\n La varianza agrupada es: ")
+Sp
+
+
+
+```
+
+
+
+### $W$ y $B$, discriminante generalizado. 
+
+
+
+```{r}
+sample_bet_g <- function(means, mean_o){
+  B <- matrix(0, nrow = 2, ncol = 2)
+  for(xbar in means){
+    B <- B + (xbar - mean_o) %*% t(xbar - mean_o)
+  }
+  return(B)
+}
+
+
+
+#overal mean
+g <- length(unique(df_r[,3]))         #num of groups
+mean_o <- c(0,0)
+for(xbar in means)
+  mean_o <- mean_o + xbar             #overal mean of groups
+
+# B
+B <- sample_bet_g(means, mean_o)
+
+# W
+W <- (n - g)* Sp
+Winv <- solve(W)
+# eigen W-1B
+sWB <-eigen(Winv%*% B)
+
+B
+Winv
+sWB
+```
+
+Clasificaremos el siguiente alumno $x_{0}^{T} = [3.21 \quad 497]$.
+
+```{r}
+#new obs
+x.9 <- c(3.21, 497)
+
+# discriminants
+
+#first we make unite variance 
+v1 <- t(as.matrix(sWB$vectors[,1])) %*% Sp %*% as.matrix(sWB$vectors[,1])
+v2 <- t(as.matrix(sWB$vectors[,2])) %*% Sp %*% as.matrix(sWB$vectors[,2])
+
+a1 <- as.matrix(sWB$vectors[,1]) / v1[1]
+a2 <- as.matrix(sWB$vectors[,2]) / v2[1]
+
+# discriminants
+y <- t(cbind(a1,a2)) %*% x.9
+mu_y_p1 <- t(cbind(a1,a2)) %*% means[[1]]
+mu_y_p2 <- t(cbind(a1,a2)) %*% means[[2]]
+mu_y_p3 <- t(cbind(a1,a2)) %*% means[[3]]
+
+
+#clasiffy
+score_p1 <- t(y - mu_y_p1) %*% (y - mu_y_p1)
+score_p2 <- t(y - mu_y_p2) %*% (y - mu_y_p2)
+score_p3 <- t(y - mu_y_p3) %*% (y - mu_y_p3)
+
+score_p1
+score_p2
+score_p3
+
+```
+
+Vemos que el score más pequeño es el de la población $\prod_{3}$ , por lo que _clasificamos_ al estudiante nuevo $x_0$ como alguien en el _border line_ .
+
+La clasificación _sí_ coincide con la del libro.
+
+## Ejercicio 9
+
+```{r}
+data("hemophilia")
+plot(hemophilia$AHFactivity)
+plot(hemophilia$AHFantigen)
+```
+
+a. Investiga si son datos normales bivariados
+
+```{r}
+ad.test(hemophilia$AHFactivity)
+ad.test(hemophilia$AHFantigen)
+```
+Con una significancia alta, tenemos que se prueba la hipótesis de normalidad bivariada.
+
+b. Obtener la función lineal muestral distriminante 
+
+Recordar que el análisis discriminante lineal hace exactamente lo mismo que correlación
+canónica.
+
+```{r}
+(mc.9 <- CovMcd(hemophilia[,1:2]))
+col <- ifelse(hemophilia$gr == "carrier", 2, 3) 
+plot(mc.9, which="tolEllipsePlot", class=TRUE, col=col)
+plot(AHFantigen~AHFactivity, data=hemophilia, col=as.numeric(as.factor(gr))+1)
+
+```
+
+La gráfica anterior indica que es apropiado hacer un análisis discriminante lineal. En este diagrama, los puntos verdes representan a las sanas, mientras que los portadores de hemofilia se representan con puntos de color rojo.
+
+```{r}
+datos.9 <- melt(hemophilia, value.name = "valor")
+aggregate(formula = valor ~ gr + variable, data = datos.9,  FUN = function(x){shapiro.test(x)$p.value})
+```
+
+
+Todos tienen p-value mayor a 0.05, entonces no se rechaza y decimos que son todos normales.
+
+%%Análisis discriminante lineal
+
+b. Función discriminante lineal de asumiendo probabilidades iguales
+
+```{r}
+modelo_lda.9 <- lda(formula = gr ~ AHFactivity + AHFantigen, data = hemophilia)
+modelo_lda.9
+```
+c. Usando la función anterior clasificar las nuevas observaciones
+
+```{r}
+nuevas_observaciones <- data.frame(AHFactivity = c(-.112,-.059,.064,-.043,-.05,-.094,-.123,-.011,-.21,-.126), AHFantigen = c(-.279,-.068,.012,-.052,-.098,-.113,-.143,-.037,-.09,-.019) )
+```
+
+
+```{r}
+predict(object = modelo_lda.9, newdata = nuevas_observaciones)
+```
+
+
+```{r}
+predicciones <- predict(object = modelo_lda.9, newdata = hemophilia[, c(1,2)], method = "predictive")
+table(hemophilia$gr, predicciones$class, dnn = c("Clase real", "Clase predicha"))
+```
+
+```{r}
+trainig_error <- mean(hemophilia$gr != predicciones$class) * 100
+paste("trainig_error=", trainig_error, "%")
+```
+
+
+>>>>>>> Stashed changes
 
