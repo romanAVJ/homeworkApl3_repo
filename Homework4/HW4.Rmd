@@ -733,6 +733,12 @@ Las correlaciones entre las dos funciones canónicas, son 0.8, 0.2 y 0.73 respec
 
 Ahora, para probar la hipótesis necesitamos hacer una prueba. Tenemos con Wilks lambda con p-value de 0.06353>0.05, entonces no rechazamos la hipótesis nula. Por lo que no rechazamos la hipótesis nula de que no hay relación entre los dos conjuntos de variables y concluimos que los dos conjuntos de variables son independientes.
 
+## Ejercicio 7
+
+### a) Usano diferentes simbolos para cada grupo, plotea los pares de datos $(x_1,x_2)$ $(x_1,x_3)$ y $(x_1,x_4)$ ¿Parece que los datos son aproximados a una normal bivariada para cualquiera de estos pares?
+
+### b) Usa $n_1 = 21$ pares de observaciones $(x_1,x_2)$
+
 
 
 ## Ejercicio 8: GPA & GMAT
