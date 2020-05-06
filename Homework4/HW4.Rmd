@@ -38,7 +38,7 @@ instalar <- function(paquete) {
     }
 }
 libs <- c( 'HistData', 'rrcov', 'nortest', 'corrplot', 'CCA', 
-'candisc','car','dummies','corrplot','knitr','ggplot2') 
+'candisc','car','dummies','corrplot','knitr','ggplot2','cowplot') 
 lapply(libs, instalar)
 ```
 
@@ -735,10 +735,72 @@ Ahora, para probar la hipótesis necesitamos hacer una prueba. Tenemos con Wilks
 
 ## Ejercicio 7
 
-### a) Usano diferentes simbolos para cada grupo, plotea los pares de datos $(x_1,x_2)$ $(x_1,x_3)$ y $(x_1,x_4)$ ¿Parece que los datos son aproximados a una normal bivariada para cualquiera de estos pares?
+Datos financieros anuales de firms que estan en bancarrota, dos años de declararse en bancarrota. Las variables son $X_1 =(\text{cashflow})/ (\text{total debt})$, $X_2 =(\text{net income})/ (\text{total assets})$, $X_3 =(\text{current assets})/ (\text{current liabilitites})$ y $X_4 =(\text{current assets})/ (\text{net sales})$
 
-### b) Usa $n_1 = 21$ pares de observaciones $(x_1,x_2)$
 
+```{r, echo = FALSE}
+df_7 <- read.table('T11-4.DAT')
+names(df_7) <- c("X1","X2","X3","X4","Population")
+V <- as.logical(df_7$Population)
+V <- factor(V,labels = c('Grupo 1','Grupo 2'))
+df_7$Grupo = V
+head(df_7)
+```
+
+### a) Usando diferentes simbolos para cada grupo, plotea los pares de datos $(x_1,x_2)$ $(x_1,x_3)$ y $(x_1,x_4)$ ¿Parece que los datos son aproximados a una normal bivariada para cualquiera de estos pares?
+```{r}
+plt.7.1 <- ggplot(df_7,aes(x = df_7$X1, y = df_7$X2, group = df_7$Grupo)) + geom_point(alpha = 0.75, size = 3.5, aes(shape = Grupo, color = Grupo)) + ylab("X2")+xlab("X1")+ ggtitle("Graph 7.1") + theme_classic()
+plt.7.2 <- ggplot(df_7,aes(x = df_7$X1, y = df_7$X3, group = df_7$Grupo)) + geom_point(alpha = 0.75, size = 3.5, aes(shape = Grupo, color = Grupo)) + ylab("X3")+xlab("X1")+ ggtitle("Graph 7.2") + theme_classic()
+plt.7.3 <- ggplot(df_7,aes(x = df_7$X1, y = df_7$X4, group = df_7$Grupo)) + geom_point(alpha = 0.75, size = 3.5, aes(shape = Grupo, color = Grupo)) + ylab("X4")+xlab("X1")+ ggtitle("Graph 7.3") + theme_classic()
+```
+```{r,echo=FALSE}
+plt.7.1
+```
+```{r,echo=FALSE}
+plt.7.2
+```
+```{r,echo=FALSE}
+plt.7.3
+```
+Viendo las graficas, podemos pensar que los datos vienen de una normal bivariada, pues podriamos englobarlas en un elipse, en otras con menor.
+
+
+### b) Usando las $n_1 = 21$ pares de observaciones $(x_1,x_2)$ de firmas quebradas y las $n_2 = 25$ pares de observaciones $(x_1,x_2)$ no en quiebra, cacule la media muestral para $x_1$ y $x_2$ y la matriz de covarianzas S1 y S2.
+Obtenemos las siguientes medias.
+```{r, echo = FALSE}
+means1 <- tapply(df_7$X1,df_7$Grupo,mean)
+means2<- tapply(df_7$X2,df_7$Grupo,mean)
+print("Para X1")
+(x1.bar <- c(means1[1],means2[1]))
+print("Para X2")
+(x1.bar <- c(means1[2],means2[2]))
+```
+
+```{r,echo = FALSE}
+print("S1")
+(S1 <- cov(df_7[1:21,1:2]))
+print("S2")
+(S2 <- cov(df_7[22:46,1:2]))
+
+```
+
+
+### c) Usando los resultadoes en (b) y asumiendo que ambas muestras aleatorias provienen de una normal bivariada, construya la recgla de clasificación(11-29) con $p_1 = p_2$ y con $c(1|2) = c(2|1)$
+Bajo estas hipotesis la regla de decision quedaria dada de la siguiente forma
+
+$$-\frac{1}{2}x_0^T(S_1^{-1} - S_2^{-1})x_0 + (\bar{x}_1S_1^{-1} - \bar{x}_2S_2^{-1})x_0 - k \geq 0$$
+
+
+
+### d) Evalue el desempeño de la regla de clasificación desarrollada en (c) al calcular el error aparente (APER) y el error estimado actual (AER)
+
+### e) Repita parte c y d asuientod $p_1= 0.05$ y $p_2= 0.95$ y con $c(1|2) = c(2|1)$. ¡Es razonable esta eleccion de aprioris? Explique
+
+### f) Usando los resultados en (b), forme la pooled covariance matriz $S_pooled$ y construya el discriminante lineal de Fisher. Use essta funcion para clasificar la muestra de observaciones y evalue el APER. ¿El discriminante lineal de fisher un clasificador sensato en este caso? Explique
+
+### g)Repita de la b)-e) usando los pares de variabeles  $(X_1,X_3)$ y $(X_1,X_4)$ ¿Algunas variables parecen ser clasificadas mejor que otras? Explique
+
+### h) Repita de la b)-e) usando observaciones en las cuatro variables $(X_1,X_2,X_3,X_4)$
 
 
 ## Ejercicio 8: GPA & GMAT
