@@ -1,12 +1,8 @@
 ---
 title: "hm4"
 author: "Pablo, Román, Sofia"
-date: "5/5/2020"
-output:
-  html_notebook: default
-  html_document:
-    df_print: paged
-  pdf_document: default
+date: "6/5/2020"
+output: html_document
 ---
 
 ```{r, include = FALSE}
@@ -489,7 +485,8 @@ _NOTA_:
 Curiosamente los outputs de _cancor_ , _cc_ y la formulación directa por eigenvalores y eigenvectores da muy distinta. A continuación se mostrarán los resultados. 
 
 
-```{r,echo = FALSE}
+```{r load_df1}
+# set sets
 fa_lis <- c('age','df1_high','df1_medium','df1_married','df1_grad')
 fa_matrix <- df1[,fa_lis]
 
